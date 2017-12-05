@@ -5,21 +5,18 @@ import json
 import argparse
 import logging
 import yaml
-import traceback
-from datetime import datetime
-from pprint import pprint
 from piston import Steem
-from piston.amount import Amount
-from piston.blockchain import Blockchain
-from piston.account import Account
 
 log = logging.getLogger(__name__)
 
 def transfer(steem_instance, account, to, amount, asset, memo):
     """ transfer ASSET to someone """
 
-    log.info('transferring to %s: %s GBG', to, amount)
-    steem_instance.transfer(to, amount, asset, memo=memo, account=account)
+    try:
+        log.info('transferring to: {} {} "{}"'.format(to, amount, asset, memo))
+        steem_instance.transfer(to, amount, asset, memo=memo, account=account)
+    except Exception as e:
+        log.error(e)
 
 def main():
 
