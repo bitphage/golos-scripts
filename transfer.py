@@ -13,7 +13,7 @@ def transfer(steem_instance, account, to, amount, asset, memo):
     """ transfer ASSET to someone """
 
     try:
-        log.info('transferring to {}: {} "{}"'.format(to, amount, asset, memo))
+        log.info('transferring to {}: {} {} "{}"'.format(to, amount, asset, memo))
         steem_instance.transfer(to, amount, asset, memo=memo, account=account)
     except Exception as e:
         log.error(e)
