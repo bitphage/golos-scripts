@@ -64,7 +64,7 @@ def main():
     if not args.no_sum:
         print('--------------------')
         print('Totals:')
-        print('{}  {}  {:.0f}'.format(sum_gbg, sum_golos, sum_gp))
+        print('{:.3f}  {:.3f}  {:.0f}'.format(sum_gbg, sum_golos, sum_gp))
 
 
 if __name__ == '__main__':
