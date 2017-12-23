@@ -127,19 +127,22 @@ def convert_golos_to_gbg(steem_instance, amount, price_source='median'):
     value = amount * price
     return value
 
-def convert_gbg_to_golos(steem_instance, amount):
+def convert_gbg_to_golos(steem_instance, amount, price_source='median'):
     """ Convert GBG to GOLOS
         :param Steem steem_instance: Steem() instance to use when accessing a RPC
         :param float amount: amount of GBG to convert
+        :param str price_source: where to get price from - median or market
     """
 
-    try:
-        cv = Converter(steem_instance)
-        payout_golos = cv.sbd_to_steem(amount)
-    except Exception as e:
-        log.error('failed to convert GBG to GOLOS: %s', e)
+    if price_source == 'median':
+        price = get_median_price(steem_instance)
+    elif price_source == 'market':
+        price = get_market_price(steem_instance)
+
+    if not price:
         return False
-    return payout_golos
+    value = amount / price
+    return value
 
 def calc_payout(steem_instance, net_rshares):
     """ Calc payout in GOLOS based on net_rshares
