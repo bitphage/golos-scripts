@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import logging
+import string
+import random
 
 from datetime import datetime
 from datetime import timedelta
@@ -217,3 +219,8 @@ def get_voting_power(steem_instance, account):
     if current_power > 100:
         current_power = 100
     return current_power
+
+def generate_password(size=53, chars=string.ascii_letters + string.digits):
+    """ Generate random word with letters and digits
+    """
+    return ''.join(random.choice(chars) for x in range(size))
