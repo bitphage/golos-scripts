@@ -261,7 +261,7 @@ def get_bandwidth(steem_instance, account, type='market'):
                 / STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS)
 
     # example code to estimate whether your new transaction will exceed bandwidth or not
-    #trx_size = 1024*2
+    #trx_size = 1024*2 # imagine 2 KB trx
     #trx_bandwidth = trx_size * STEEMIT_BANDWIDTH_PRECISION
     #account_average_bandwidth = new_bandwidth + trx_bandwidth
 
