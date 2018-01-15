@@ -276,9 +276,9 @@ def get_bandwidth(steem_instance, account, type='market'):
     used = account_average_bandwidth * total_vesting_shares
 
 
-    log.info('used: {:.>61.0f}'.format(used))
-    log.info('avail: {:.>60.0f}'.format(avail))
-    log.info('used ratio: {:.>55.2%}'.format(used/avail))
+    log.info('used: {:.>62.0f}'.format(used))
+    log.info('avail: {:.>61.0f}'.format(avail))
+    log.info('used ratio: {:.>56.2%}'.format(used/avail))
 
     if used < avail:
         log.debug('has bandwidth')
