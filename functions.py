@@ -18,7 +18,8 @@ log = logging.getLogger(__name__)
 CONTENT_CONSTANT = 2000000000000
 STEEMIT_100_PERCENT = 10000
 STEEMIT_VOTE_REGENERATION_SECONDS = 5*60*60*24 # 5 days
-
+STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60*60*24*7 # 7 days
+STEEMIT_BANDWIDTH_PRECISION = 1000000
 
 def get_post_content(steem_instance, author, permlink):
     """ Wrapper for Steem.get_content()
@@ -219,6 +220,73 @@ def get_voting_power(steem_instance, account):
     if current_power > 100:
         current_power = 100
     return current_power
+
+def get_bandwidth(steem_instance, account, type='market'):
+    """ Estimate current account bandwidth and usage ratio
+        :param Steem steem_instance: Steem() instance to use when accesing a RPC
+        :param str account: account name
+        :param str type: 'market' used for transfer operations, forum - for posting and voting
+    """
+
+    a = Account(account, steem_instance=steem_instance)
+
+    global_props = steem_instance.info()
+
+    account_vshares = Amount(a['vesting_shares']).amount
+    log.debug('account_vshares: {:.>50.0f}'.format(account_vshares))
+
+    # get bandwidth info from network
+    if type == 'market':
+        account_average_bandwidth = int(a['new_average_market_bandwidth'])
+        last_bw_update_time = datetime.strptime(a['last_market_bandwidth_update'], '%Y-%m-%dT%H:%M:%S')
+    elif type == 'forum':
+        account_average_bandwidth = int(a['new_average_bandwidth'])
+        last_bw_update_time = datetime.strptime(a['last_bandwidth_update'], '%Y-%m-%dT%H:%M:%S')
+
+    # seconds passed since last bandwidth update
+    elapsed_time = (datetime.utcnow() - last_bw_update_time).total_seconds()
+
+    max_virtual_bandwidth = int(global_props['max_virtual_bandwidth'])
+    log.debug('max_virtual_bandwidth: {:.>44.0f}'.format(max_virtual_bandwidth))
+
+    total_vesting_shares = Amount(global_props['total_vesting_shares']).amount
+    log.debug('total_vesting_shares: {:.>45.0f}'.format(total_vesting_shares))
+
+
+    # calculate bandwidth regeneration
+    if elapsed_time > STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS:
+        new_bandwidth = 0
+    else:
+        new_bandwidth = (((STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS - elapsed_time) * account_average_bandwidth)
+                / STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS)
+
+    # example code to estimate whether your new transaction will exceed bandwidth or not
+    #trx_size = 1024*2
+    #trx_bandwidth = trx_size * STEEMIT_BANDWIDTH_PRECISION
+    #account_average_bandwidth = new_bandwidth + trx_bandwidth
+
+    account_average_bandwidth = new_bandwidth
+    log.debug('account_average_bandwidth: {:.>40.0f}\n'.format(account_average_bandwidth))
+
+
+    # c++ code:
+    # has_bandwidth = (account_vshares * max_virtual_bandwidth) > (account_average_bandwidth * total_vshares);
+
+    avail = account_vshares * max_virtual_bandwidth
+    used = account_average_bandwidth * total_vesting_shares
+
+
+    log.info('used: {:.>61.0f}'.format(used))
+    log.info('avail: {:.>60.0f}'.format(avail))
+    log.info('used ratio: {:.>55.2%}'.format(used/avail))
+
+    if used < avail:
+        log.debug('has bandwidth')
+    else:
+        log.debug('no bandwidth')
+
+    return used/avail * 100
+
 
 def generate_password(size=53, chars=string.ascii_letters + string.digits):
     """ Generate random word with letters and digits
