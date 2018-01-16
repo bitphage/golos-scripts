@@ -233,7 +233,7 @@ def get_bandwidth(steem_instance, account, type='market'):
     global_props = steem_instance.info()
 
     account_vshares = Amount(a['vesting_shares']).amount
-    log.debug('account_vshares: {:.>50.0f}'.format(account_vshares))
+    log.debug('{:.<30}{:.>30.0f}'.format('account_vshares:', account_vshares))
 
     # get bandwidth info from network
     if type == 'market':
@@ -247,10 +247,10 @@ def get_bandwidth(steem_instance, account, type='market'):
     elapsed_time = (datetime.utcnow() - last_bw_update_time).total_seconds()
 
     max_virtual_bandwidth = int(global_props['max_virtual_bandwidth'])
-    log.debug('max_virtual_bandwidth: {:.>44.0f}'.format(max_virtual_bandwidth))
+    log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth:', max_virtual_bandwidth))
 
     total_vesting_shares = Amount(global_props['total_vesting_shares']).amount
-    log.debug('total_vesting_shares: {:.>45.0f}'.format(total_vesting_shares))
+    log.debug('{:.<30}{:.>30.0f}'.format('total_vesting_shares:', total_vesting_shares))
 
 
     # calculate bandwidth regeneration
@@ -266,7 +266,7 @@ def get_bandwidth(steem_instance, account, type='market'):
     #account_average_bandwidth = new_bandwidth + trx_bandwidth
 
     account_average_bandwidth = new_bandwidth
-    log.debug('account_average_bandwidth: {:.>40.0f}\n'.format(account_average_bandwidth))
+    log.debug('{:.<30}{:.>30.0f}'.format('account_average_bandwidth:', account_average_bandwidth))
 
 
     # c++ code:
@@ -276,9 +276,9 @@ def get_bandwidth(steem_instance, account, type='market'):
     used = account_average_bandwidth * total_vesting_shares
 
 
-    log.info('used: {:.>62.0f}'.format(used))
-    log.info('avail: {:.>61.0f}'.format(avail))
-    log.info('used ratio: {:.>56.2%}'.format(used/avail))
+    log.info('{:.<30}{:.>30.0f}'.format('used:', used))
+    log.info('{:.<30}{:.>30.0f}'.format('avail:', avail))
+    log.info('{:.<30}{:.>30.2%}'.format('used ratio:', used/avail))
 
     if used < avail:
         log.debug('has bandwidth')

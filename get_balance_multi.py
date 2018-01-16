@@ -44,7 +44,7 @@ def main():
     golos = Steem(nodes=conf['nodes_new'], no_broadcast=True)
 
     if not args.no_header:
-        print('Account GBG GOLOS GP')
+        print('{:<20} {:>10} {:>11} {:>11}'.format('Account', 'GBG', 'GOLOS', 'GP'))
         print('--------------------')
 
     sum_gbg = float()
@@ -56,15 +56,14 @@ def main():
         vests = b['total']['GESTS']
         cv = Converter(golos)
         gp = cv.vests_to_sp(vests)
-        print('{}   {}  {}  {:.0f}'.format(acc, b['total']['GBG'], b['total']['GOLOS'], gp))
+        print('{:<20} {:>10}  {:>10}  {:>10.0f}'.format(acc, b['total']['GBG'], b['total']['GOLOS'], gp))
         sum_gbg += b['total']['GBG']
         sum_golos += b['total']['GOLOS']
         sum_gp += gp
 
     if not args.no_sum:
         print('--------------------')
-        print('Totals:')
-        print('{:.3f}  {:.3f}  {:.0f}'.format(sum_gbg, sum_golos, sum_gp))
+        print('{:<20} {:>10.3f}  {:>10.3f}  {:>10.0f}'.format('Totals:', sum_gbg, sum_golos, sum_gp))
 
 
 if __name__ == '__main__':

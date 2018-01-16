@@ -47,8 +47,8 @@ def main():
         log.setLevel(logging.CRITICAL)
 
     handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
+    #formatter = logging.Formatter("%(levelname)s: %(message)s")
+    #handler.setFormatter(formatter)
     log.addHandler(handler)
 
     # parse config
