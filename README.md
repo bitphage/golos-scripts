@@ -10,6 +10,7 @@ This is a python scripts collection for golos blockchain network.
 * `estimate_upvote.py` - estimate author payout simulating someone's upvote
 * `get_votnig_power.py` - calculate current voting power of specified account
 * `get_bandwidth.py` - calculate used bandwidth of the account. Can be used in scripting as monitoring tool (`-w 75 -q`)
+* `estimate_median_price.py` - look up current witnesses price feeds and calculate new expected median price
 
 To use in virtualenv
 --------------------

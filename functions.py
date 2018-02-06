@@ -92,6 +92,28 @@ def get_median_price(steem_instance):
     log.debug('current median price: %s', price)
     return price
 
+def estimate_median_price(steem_instance):
+    """ Calculate new expected median price based on current price feeds
+        :param Steem steem_instance: Steem() instance to use when accesing a RPC
+    """
+
+    count = 20
+    try:
+        witnesses = steem_instance.rpc.get_witnesses_by_vote('', count)
+    except Exception as e:
+        log.error(e)
+        return False
+
+    price_sum = float()
+    for w in witnesses:
+        base = Amount(w['sbd_exchange_rate']['base']).amount
+        quote = Amount(w['sbd_exchange_rate']['quote']).amount
+        price = base/quote
+        price_sum += price
+
+    median = price_sum/count
+    return median
+
 def get_market_price(steem_instance):
     """
     Get current market price GBG/GOLOS
