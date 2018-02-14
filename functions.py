@@ -96,23 +96,24 @@ def estimate_median_price(steem_instance):
     """ Calculate new expected median price based on current price feeds
         :param Steem steem_instance: Steem() instance to use when accesing a RPC
     """
-
-    count = 20
+    count = 19
     try:
         witnesses = steem_instance.rpc.get_witnesses_by_vote('', count)
     except Exception as e:
         log.error(e)
         return False
 
-    price_sum = float()
+    # add price key
     for w in witnesses:
         base = Amount(w['sbd_exchange_rate']['base']).amount
         quote = Amount(w['sbd_exchange_rate']['quote']).amount
-        price = base/quote
-        price_sum += price
+        w['price'] = base/quote
 
-    median = price_sum/count
-    return median
+    # sort witnesses by price
+    sorted_w = sorted(witnesses, key=lambda k: k['price'])
+
+    # 9th element price
+    return sorted_w[9]['price']
 
 def get_market_price(steem_instance):
     """
