@@ -271,6 +271,7 @@ def get_bandwidth(steem_instance, account, type='market'):
 
     max_virtual_bandwidth = int(global_props['max_virtual_bandwidth'])
     log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth:', max_virtual_bandwidth))
+    #log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth, KB:', max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024))
 
     total_vesting_shares = Amount(global_props['total_vesting_shares']).amount
     log.debug('{:.<30}{:.>30.0f}'.format('total_vesting_shares:', total_vesting_shares))
@@ -291,17 +292,30 @@ def get_bandwidth(steem_instance, account, type='market'):
     account_average_bandwidth = new_bandwidth
     log.debug('{:.<30}{:.>30.0f}'.format('account_average_bandwidth:', account_average_bandwidth))
 
-
     # c++ code:
     # has_bandwidth = (account_vshares * max_virtual_bandwidth) > (account_average_bandwidth * total_vshares);
 
     avail = account_vshares * max_virtual_bandwidth
     used = account_average_bandwidth * total_vesting_shares
+    log.debug('{:.<30}{:.>30.0f}'.format('used:', used))
+    log.debug('{:.<30}{:.>30.0f}'.format('avail:', avail))
 
+    used_ratio = used/avail
+    log.info('{:.<30}{:.>30.2%}'.format('used ratio:', used_ratio))
 
-    log.info('{:.<30}{:.>30.0f}'.format('used:', used))
-    log.info('{:.<30}{:.>30.0f}'.format('avail:', avail))
-    log.info('{:.<30}{:.>30.2%}'.format('used ratio:', used/avail))
+    # account bandwidth is actually a representation of sent bytes, so get these bytes
+    used_kb = account_average_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
+    # market ops uses x10 bandwidth
+    if type == 'market':
+        used_kb = used_kb/10
+    log.info('{:.<30}{:.>30.0f}'.format('used KB:', used_kb))
+
+    # available account bandwidth is a fraction of max_virtual_bandwidth based on his portion of total_vesting_shares
+    avail_kb = account_vshares/total_vesting_shares * max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
+    if type == 'market':
+        avail_kb = avail_kb/10
+    log.info('{:.<30}{:.>30.0f}'.format('avail KB:', avail_kb))
+
 
     if used < avail:
         log.debug('has bandwidth')
