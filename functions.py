@@ -308,13 +308,13 @@ def get_bandwidth(steem_instance, account, type='market'):
     # market ops uses x10 bandwidth
     if type == 'market':
         used_kb = used_kb/10
-    log.info('{:.<30}{:.>30.0f}'.format('used KB:', used_kb))
+    log.info('{:.<30}{:.>30.2f}'.format('used KB:', used_kb))
 
     # available account bandwidth is a fraction of max_virtual_bandwidth based on his portion of total_vesting_shares
     avail_kb = account_vshares/total_vesting_shares * max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
     if type == 'market':
         avail_kb = avail_kb/10
-    log.info('{:.<30}{:.>30.0f}'.format('avail KB:', avail_kb))
+    log.info('{:.<30}{:.>30.2f}'.format('avail KB:', avail_kb))
 
 
     if used < avail:
