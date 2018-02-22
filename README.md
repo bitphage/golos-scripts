@@ -5,6 +5,7 @@ This is a python scripts collection for golos blockchain network.
 
 * `change_password.py` - change all account keys using random generated password or user-supplied
 * `transfer.py` - transfer some money to another account
+* `transfer_to_vesting.py` - transfer GOLOS to vesting balance (Golos Power)
 * `get_balance.py` - display account balances
 * `get_balance_multi.py` - display balances of multiple accounts
 * `estimate_upvote.py` - estimate author payout simulating someone's upvote
