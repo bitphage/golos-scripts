@@ -12,6 +12,8 @@ This is a python scripts collection for golos blockchain network.
 * `get_votnig_power.py` - calculate current voting power of specified account
 * `get_bandwidth.py` - calculate used bandwidth of the account. Can be used in scripting as monitoring tool (`-w 75 -q`)
 * `estimate_median_price.py` - look up current witnesses price feeds and calculate new expected median price
+* `withdraw_vesting.py` - withdraw from vesting balance of one account to specified account
+* `withdraw_vesting_multi.py` - withdraw from vesting balance of multiple accounts to specified account
 
 To use in virtualenv
 --------------------
