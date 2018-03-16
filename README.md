@@ -3,7 +3,7 @@ golos-scripts
 
 This is a python scripts collection for golos blockchain network.
 
-* `change_password.py` - change all account keys using random generated password or user-supplied
+* `change_password.py` - change all account keys using random generated password or user-provided
 * `transfer.py` - transfer some money to another account
 * `transfer_to_vesting.py` - transfer GOLOS to vesting balance (Golos Power)
 * `get_balance.py` - display account balances
@@ -24,3 +24,9 @@ virtualenv -p python3 venv
 source ./venv/bin/activate
 pip3 install -r requirements.txt
 ```
+
+How to use
+----------
+
+1. Prepare working environment using virtualenv (see above)
+2. Copy `common.yml.example` to `common.yml` and change variables according to your needs
