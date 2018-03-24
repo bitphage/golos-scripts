@@ -271,7 +271,7 @@ def get_bandwidth(steem_instance, account, type='market'):
 
     max_virtual_bandwidth = int(global_props['max_virtual_bandwidth'])
     log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth:', max_virtual_bandwidth))
-    #log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth, KB:', max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024))
+    log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth, KB:', max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024))
 
     total_vesting_shares = Amount(global_props['total_vesting_shares']).amount
     log.debug('{:.<30}{:.>30.0f}'.format('total_vesting_shares:', total_vesting_shares))
