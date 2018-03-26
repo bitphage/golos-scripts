@@ -98,7 +98,7 @@ def estimate_median_price(steem_instance):
     """
     count = 19
     try:
-        witnesses = steem_instance.rpc.get_witnesses_by_vote('', count)
+        witnesses = steem_instance.rpc.get_witnesses_by_vote('', count, api='database_api')
     except Exception as e:
         log.error(e)
         return False
