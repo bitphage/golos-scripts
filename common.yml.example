@@ -1,11 +1,11 @@
 # new style for golos-python
 nodes_new:
-  - http://localhost:8090
+  - http://localhost:8091
   - https://api.golos.cf
 
 # old-style for piston-lib
 nodes_old:
-  - ws://localhost:8090
+  - ws://localhost:8091
   - wss://api.golos.cf
 
 # your private keys here
