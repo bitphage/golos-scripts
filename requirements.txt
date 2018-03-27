@@ -1,3 +1,0 @@
-pyaml
-git+https://github.com/GolosChain/golos-python.git#egg=steem
-piston-lib

@@ -15,14 +15,19 @@ This is a python scripts collection for golos blockchain network.
 * `withdraw_vesting.py` - withdraw from vesting balance of one account to specified account
 * `withdraw_vesting_multi.py` - withdraw from vesting balance of multiple accounts to specified account
 
-To use in virtualenv
---------------------
+Requirements
+------------
+
+* golos node 0.17+
+
+Installation using pipenv
+-------------------------
+
+1. Install [pipenv](https://docs.pipenv.org/).
+2. Run the following code
 
 ```
-mkdir venv
-virtualenv -p python3 venv
-source ./venv/bin/activate
-pip3 install -r requirements.txt
+pipenv install
 ```
 
 How to use
@@ -30,3 +35,16 @@ How to use
 
 1. Prepare working environment using virtualenv (see above)
 2. Copy `common.yml.example` to `common.yml` and change variables according to your needs
+3. Run the scripts:
+
+```
+pipenv shell
+./script.py
+exit
+```
+
+or
+
+```
+pipenv run ./script.py
+```
