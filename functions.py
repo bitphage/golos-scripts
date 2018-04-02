@@ -92,9 +92,10 @@ def get_median_price(steem_instance):
     log.debug('current median price: %s', price)
     return price
 
-def estimate_median_price(steem_instance):
+def estimate_median_price(steem_instance, verbose=False):
     """ Calculate new expected median price based on current price feeds
         :param Steem steem_instance: Steem() instance to use when accesing a RPC
+        :param bool verbose: print witnesses sorted by price feed
     """
     count = 19
     try:
@@ -111,6 +112,10 @@ def estimate_median_price(steem_instance):
 
     # sort witnesses by price
     sorted_w = sorted(witnesses, key=lambda k: k['price'])
+
+    if verbose:
+        for w in sorted_w:
+            print('{}: {:.3f}'.format(w['owner'], w['price']))
 
     # 9th element price
     return sorted_w[9]['price']
