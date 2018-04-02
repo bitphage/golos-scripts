@@ -41,8 +41,13 @@ def main():
 
     golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
 
+    if args.debug:
+        verbose = True
+    else:
+        verbose = False
+
     log.info('current median price: {:.3f}'.format(functions.get_median_price(golos)))
-    log.info('estimated median price: {:.3f}'.format(functions.estimate_median_price(golos)))
+    log.info('estimated median price: {:.3f}'.format(functions.estimate_median_price(golos, verbose=verbose)))
 
 if __name__ == '__main__':
     main()
