@@ -97,7 +97,7 @@ def estimate_median_price(steem_instance, verbose=False):
         :param Steem steem_instance: Steem() instance to use when accesing a RPC
         :param bool verbose: print witnesses sorted by price feed
     """
-    count = 19
+    count = 21
     try:
         witnesses = steem_instance.rpc.get_witnesses_by_vote('', count, api='database_api')
     except Exception as e:
@@ -118,7 +118,7 @@ def estimate_median_price(steem_instance, verbose=False):
             print('{}: {:.3f}'.format(w['owner'], w['price']))
 
     # 9th element price
-    return sorted_w[9]['price']
+    return sorted_w[11]['price']
 
 def estimate_median_price_from_feed(steem_instance):
     """ Calculate new expected median price based on last median price feed
