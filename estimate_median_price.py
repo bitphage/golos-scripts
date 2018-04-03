@@ -48,6 +48,7 @@ def main():
 
     log.info('current median price: {:.3f}'.format(functions.get_median_price(golos)))
     log.info('estimated median price: {:.3f}'.format(functions.estimate_median_price(golos, verbose=verbose)))
+    log.info('estimated median price (from feed): {:.3f}'.format(functions.estimate_median_price_from_feed(golos)))
 
 if __name__ == '__main__':
     main()
