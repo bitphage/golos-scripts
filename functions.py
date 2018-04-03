@@ -120,6 +120,19 @@ def estimate_median_price(steem_instance, verbose=False):
     # 9th element price
     return sorted_w[9]['price']
 
+def estimate_median_price_from_feed(steem_instance):
+    """ Calculate new expected median price based on last median price feed
+        :param Steem steem_instance: Steem() instance to use when accesing a RPC
+    """
+
+    last_feed = steem_instance.rpc.get_feed_history(api='database_api')['price_history'][-1:]
+
+    base = Amount(last_feed[0]['base'])
+    quote = Amount(last_feed[0]['quote'])
+
+    median = base.amount/quote.amount
+    return median
+
 def get_market_price(steem_instance):
     """
     Get current market price GBG/GOLOS
