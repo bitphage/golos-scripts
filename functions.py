@@ -188,11 +188,12 @@ def convert_gbg_to_golos(steem_instance, amount, price_source='median'):
     value = amount / price
     return value
 
-def calc_payout(steem_instance, net_rshares):
+def calc_payout(steem_instance, net_rshares, curve='linear'):
     """ Calc payout in GOLOS based on net_rshares
         https://golos.io/ru--apvot50-50/@now/kak-na-samom-dele-rabotayut-kvadratichnye-nachisleniya-golosa-2kh-50-50
         :param Steem steem_instance: Steem() instance to use when accesing a RPC
         :param int net_rshares: net_rshares to calculate payout from
+        :param str curve: reward curve
         :return float payout: payout amount in GOLOS
     """
 
@@ -202,9 +203,12 @@ def calc_payout(steem_instance, net_rshares):
         log.error(e)
         return False
 
-    # perform same calculations as golosd v0.16.4
-    # c++ code: return (rshares + s) * (rshares + s) - s * s;
-    vshares = (net_rshares + CONTENT_CONSTANT) * (net_rshares + CONTENT_CONSTANT) - CONTENT_CONSTANT**2
+    if curve == 'quadratic':
+        # perform same calculations as golosd v0.16.4
+        # c++ code: return (rshares + s) * (rshares + s) - s * s;
+        vshares = (net_rshares + CONTENT_CONSTANT) * (net_rshares + CONTENT_CONSTANT) - CONTENT_CONSTANT**2
+    elif curve == 'linear':
+        vshares = net_rshares
 
     total_reward_fund_steem = Amount(global_props['total_reward_fund_steem'])
     total_reward_shares2 = int(global_props['total_reward_shares2'])
