@@ -106,6 +106,7 @@ def main():
         payout = functions.calc_payout(golos, rshares)
         payout_gbg = functions.convert_golos_to_gbg(golos, payout, price_source='median')
         payout_gbg = Amount('{} GBG'.format(payout_gbg))
+        log.info('raw upvote value: {} or {:.3f} GOLOS'.format(payout_gbg, payout))
         author_payout_gp, author_payout_gbg, author_payout_golos = functions.estimate_author_payout(golos, payout_gbg)
         log.info('estimated author payout: {:.3f} GBG, {:.3f} GOLOS, {:.3f} GP'.format(
             author_payout_gbg, author_payout_golos, author_payout_gp))
