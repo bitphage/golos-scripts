@@ -24,7 +24,7 @@ def main():
             help='enable debug output'),
     parser.add_argument('-c', '--config', default='./common.yml',
             help='specify custom path for config file')
-    parser.add_argument('-a', '--account',
+    parser.add_argument('account',
             help='specify account which upvote should be estimated')
     parser.add_argument('-p', '--percent', default=100, type=float,
             help='specify upvote percent')
