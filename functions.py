@@ -351,18 +351,3 @@ def generate_password(size=53, chars=string.ascii_letters + string.digits):
     """ Generate random word with letters and digits
     """
     return ''.join(random.choice(chars) for x in range(size))
-
-
-def get_all_usernames(steem_instance, last_user=''):
-    """
-        Fetch the full list of STEEM usernames.
-        This function is taken from golos-python with little adaptaion to piston-style
-        :param Steem steem_instance: Steem() instance to use when accesing a RPC
-    """
-    usernames = steem_instance.rpc.lookup_accounts(last_user, 1000, api='database_api')
-    batch = []
-    while len(batch) != 1:
-        batch = steem_instance.rpc.lookup_accounts(usernames[-1], 1000, api='database_api')
-        usernames += batch[1:]
-
-    return usernames
