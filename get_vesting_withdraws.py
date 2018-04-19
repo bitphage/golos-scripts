@@ -50,7 +50,7 @@ def main():
     c = golos.rpc.get_account_count(api='database_api')
     log.debug('total accounts: {}'.format(c))
 
-    accs = functions.get_all_usernames(golos)
+    accs = golos.get_all_usernames()
 
     # we well get summary info about total withdrawal rate and number of accounts
     sum_rate = float()
