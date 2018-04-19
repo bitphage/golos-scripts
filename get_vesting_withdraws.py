@@ -52,33 +52,40 @@ def main():
 
     accs = golos.get_all_usernames()
 
+    start = datetime.utcnow()
+
+    # get all accounts in one batch
+    all_accounts = golos.rpc.get_accounts(accs, api='database_api')
+
     # we well get summary info about total withdrawal rate and number of accounts
     sum_rate = float()
     count = int()
 
-    start = datetime.utcnow()
-    for account in accs:
-        a = Account(account, steem_instance=golos)
-        cv = Converter(golos)
+    cv = Converter(golos)
+    steem_per_mvests = cv.steem_per_mvests()
+
+    for a in all_accounts:
         vshares = Amount(a['vesting_shares'])
         mgests = vshares.amount / 1000000
         rate = Amount(a['vesting_withdraw_rate'])
         d = datetime.strptime(a['next_vesting_withdrawal'], '%Y-%m-%dT%H:%M:%S')
 
         if mgests > args.min_mgests and rate.amount > 1000:
-            rate_gp = cv.vests_to_sp(rate.amount)
-            gp = cv.vests_to_sp(vshares.amount)
+            # We use own calculation instead of cv.vests_to_sp() to speed up execution
+            # avoiding API call on each interation
+            rate_gp = rate.amount / 1e6 * steem_per_mvests
+            gp = vshares.amount / 1e6 * steem_per_mvests
             sum_rate += rate_gp
             count += 1
 
             print('{:<16} {:<18} {:>6.0f} {:>8.0f}'.format(
-                                       account,
+                                       a['name'],
                                        d.strftime('%Y-%m-%d %H:%M'),
                                        rate_gp, gp))
 
 # non-pretty format
 #            log.info('{} {} {:.0f} / {:.0f}'.format(
-#                                       account,
+#                                       a['name'],
 #                                       d.strftime('%Y-%m-%d %H:%M'),
 #                                       rate_gp, gp))
 
