@@ -94,14 +94,14 @@ def main():
             'account': account_name,
             'memo_key': key['memo'],
             'owner': {'account_auths': owner_accounts_authority,
-                   'key_auths': owner_key_authority,
-                   'weight_threshold': 1},
+                'key_auths': owner_key_authority,
+                'weight_threshold': 1},
             'active': {'account_auths': active_accounts_authority,
-                    'key_auths': active_key_authority,
-                    'weight_threshold': 1},
+                'key_auths': active_key_authority,
+                'weight_threshold': 1},
             'posting': {'account_auths': posting_accounts_authority,
-                     'key_auths': posting_key_authority,
-                     'weight_threshold': 1},
+                'key_auths': posting_key_authority,
+                'weight_threshold': 1},
             'prefix': golos.rpc.chain_params["prefix"]
          }
 
