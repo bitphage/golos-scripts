@@ -8,17 +8,9 @@ import yaml
 import traceback
 from piston import Steem
 
-log = logging.getLogger(__name__)
+import functions
 
-def transfer(steem_instance, account, to, amount, asset, memo):
-    """ transfer ASSET to someone """
-
-    try:
-        log.info('transferring to {}: {} {} "{}"'.format(to, amount, asset, memo))
-        steem_instance.transfer(to, amount, asset, memo=memo, account=account)
-    except Exception as e:
-        log.error(e)
-        traceback.print_exc(file=sys.stdout)
+log = logging.getLogger('functions')
 
 def main():
 
@@ -65,7 +57,7 @@ def main():
     b = not args.broadcast
     golos = Steem(node=conf['nodes_old'], nobroadcast=b, keys=conf['keys'])
 
-    transfer(golos, args.f, args.to, args.amount, args.asset, args.memo)
+    functions.transfer(golos, args.f, args.to, args.amount, args.asset, args.memo)
 
 
 if __name__ == '__main__':

@@ -346,8 +346,23 @@ def get_bandwidth(steem_instance, account, type='market'):
 
     return used/avail * 100
 
-
 def generate_password(size=53, chars=string.ascii_letters + string.digits):
     """ Generate random word with letters and digits
     """
     return ''.join(random.choice(chars) for x in range(size))
+
+def transfer(steem_instance, account, to, amount, asset, memo):
+    """ Transfer ASSET to someone
+        :param Steem steem_instance: Steem() instance to use when accesing a RPC
+        :param str account: account to transfer from
+        :param str to: account to transfer to
+        :param str asset: asset
+        :param str memo: message to include
+    """
+
+    try:
+        log.info('transferring to {}: {} {} "{}"'.format(to, amount, asset, memo))
+        steem_instance.transfer(to, amount, asset, memo=memo, account=account)
+    except Exception as e:
+        log.error(e)
+        traceback.print_exc(file=sys.stdout)
