@@ -26,6 +26,8 @@ def main():
             help='enable debug output'),
     parser.add_argument('-c', '--config', default='./common.yml',
             help='specify custom path for config file')
+    parser.add_argument('-n', '--notify', action='store_true',
+            help='send message to accounts who uses conversions')
     args = parser.parse_args()
 
     # create logger
@@ -49,6 +51,14 @@ def main():
 
     accs = golos.get_all_usernames()
 
+    # obtain median and market prices whether we're going to send a notification
+    if args.notify:
+        bid = functions.get_market_price(golos)
+        median = functions.get_median_price(golos)
+        if not bid or not median:
+            log.critical('failed to obtain price')
+            sys.exit(1)
+
     start = datetime.utcnow()
     for acc in accs:
         r = golos.rpc.get_conversion_requests(acc, api='database_api')
@@ -59,6 +69,10 @@ def main():
                                     r[0]['amount'],
                                     d.strftime('%Y-%m-%d %H:%M')
                                     ))
+
+            if args.notify:
+                msg = conf['notify_message'].format(median, bid)
+                functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GBG', msg)
 
     log.debug('getting conversion requests took {:.2f} seconds'.format(
         (datetime.utcnow() - start).total_seconds()))

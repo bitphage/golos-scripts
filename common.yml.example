@@ -8,6 +8,10 @@ nodes_old:
   - ws://localhost:8091
   - wss://api.golos.cf
 
+# settings for get_conversion_requests.py, used for notifies about converson requests
+notify_account: foo
+notify_message: "Вы конвертируете GBG в GOLOS через внутреннюю конвертацию. В данный момент гораздо выгоднее использовать для этого внутреннюю биржу. Курс конвертации: {:.3f} GBG/GOLOS, bid-курс биржи: {:.3f} GBG/GOLOS"
+
 # your private keys here
 keys:
   - foo
