@@ -16,6 +16,7 @@ This is a python scripts collection for golos blockchain network.
 * `get_bandwidth.py` - calculate used bandwidth of the account. Can be used in scripting as monitoring tool (`-w 75 -q`)
 * `get_vesting_withdraws.py` - find all vesting withdrawals with rates and dates
 * `get_conversion_requests.py` - find all GBG conversion requests
+* `create_account.py` - create child account
 
 * golos node 0.17+
 
