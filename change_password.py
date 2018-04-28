@@ -36,6 +36,8 @@ def main():
             help='account name'),
     parser.add_argument('-p', '--password',
             help='manually specify a password'),
+    parser.add_argument('--broadcast', action='store_true', default=False,
+            help='broadcast transactions'),
     args = parser.parse_args()
 
     # create logger
@@ -52,6 +54,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
+    b = not args.broadcast
     golos = Steem(node=conf['nodes_old'], nobroadcast=False, keys=conf['keys'])
     account_name = args.account
     account = Account(args.account, steem_instance=golos)
