@@ -117,8 +117,8 @@ def estimate_median_price(steem_instance, verbose=False):
         for w in sorted_w:
             print('{}: {:.3f}'.format(w['owner'], w['price']))
 
-    # 9th element price
-    return sorted_w[11]['price']
+    # 11th element price
+    return sorted_w[10]['price']
 
 def estimate_median_price_from_feed(steem_instance):
     """ Calculate new expected median price based on last median price feed
