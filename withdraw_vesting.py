@@ -60,14 +60,19 @@ def main():
     vests = b['vesting_shares']
     withdraw_amount = vests - min_balance
 
+    if args.to:
+        golos.set_withdraw_vesting_route(args.to, percentage=100, account=account, auto_vest=False)
+        to = args.to
+    else:
+        to = account
+
+
     log.info('withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
                                                           withdraw_amount.amount/1000000,
                                                           cv.vests_to_sp(withdraw_amount.amount),
                                                           account,
-                                                          args.to
+                                                          to
                                                           ))
-    if args.to:
-        golos.set_withdraw_vesting_route(args.to, percentage=100, account=account, auto_vest=False)
     golos.withdraw_vesting(withdraw_amount.amount, account=account)
 
 if __name__ == '__main__':
