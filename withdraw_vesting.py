@@ -68,11 +68,10 @@ def main():
 
 
     log.info('withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
-                                                          withdraw_amount.amount/1000000,
-                                                          cv.vests_to_sp(withdraw_amount.amount),
-                                                          account,
-                                                          to
-                                                          ))
+        withdraw_amount.amount/1000000,
+        cv.vests_to_sp(withdraw_amount.amount),
+        account,
+        to))
     golos.withdraw_vesting(withdraw_amount.amount, account=account)
 
 if __name__ == '__main__':
