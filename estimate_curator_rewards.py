@@ -65,13 +65,18 @@ def main():
         log.critical('could not find post in blockchain')
         sys.exit(1)
 
+    total_vote_weight = int(post['total_vote_weight'])
+    if total_vote_weight == 0:
+        log.critical('curation rewards disabled for this post')
+        sys.exit(0)
+
     pending_payout = functions.convert_gbg_to_golos(golos, post['total_pending_payout_value'].amount)
     active_votes = sorted(post['active_votes'], key=lambda k: datetime.strptime(k['time'], '%Y-%m-%dT%H:%M:%S'))
     sum_weight = int()
 
     for vote in active_votes:
         sum_weight += int(vote['weight'])
-        weight_pct = int(vote['weight']) / int(post['total_vote_weight'])
+        weight_pct = int(vote['weight']) / total_vote_weight
         reward = pending_payout * 0.25 * weight_pct
         time_passed = datetime.strptime(vote['time'], '%Y-%m-%dT%H:%M:%S') - post['created']
         print('weight percent: {:.2%}, reward: {:.3f} GP, voter: {}, time: {}, weight: {:.2f}'.format(
