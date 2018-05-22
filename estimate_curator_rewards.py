@@ -65,10 +65,14 @@ def main():
         log.critical('could not find post in blockchain')
         sys.exit(1)
 
+    if post['mode'] != 'first_payout':
+        log.critical('post already got a payout')
+        sys.exit(1)
+
     total_vote_weight = int(post['total_vote_weight'])
     if total_vote_weight == 0:
-        log.critical('curation rewards disabled for this post')
-        sys.exit(0)
+        log.critical('curation rewards disabled')
+        sys.exit(1)
 
     pending_payout = functions.convert_gbg_to_golos(golos, post['total_pending_payout_value'].amount)
     active_votes = sorted(post['active_votes'], key=lambda k: datetime.strptime(k['time'], '%Y-%m-%dT%H:%M:%S'))
