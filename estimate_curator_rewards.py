@@ -83,7 +83,7 @@ def main():
         weight_pct = int(vote['weight']) / total_vote_weight
         reward = pending_payout * 0.25 * weight_pct
         time_passed = datetime.strptime(vote['time'], '%Y-%m-%dT%H:%M:%S') - post['created']
-        print('weight percent: {:.2%}, reward: {:.3f} GP, voter: {}, time: {}, weight: {:.2f}'.format(
+        print('weight percent: {:.2%}, reward: {:.3f} GP, voter: {:<16}, time: {}, weight: {:.2f}'.format(
             weight_pct, reward, vote['voter'], time_passed, float(vote['weight'])/100000000000000))
 
     curators_pct = sum_weight / int(post['total_vote_weight']) * 0.25
