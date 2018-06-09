@@ -18,6 +18,7 @@ This is a python scripts collection for golos blockchain network.
 * `get_conversion_requests.py` - find all GBG conversion requests
 * `create_account.py` - create child account
 * `find_transfers.py` - scan account history to find transfers
+* `find_rewards.py` - scan account history to find author or curation rewards
 * `withdraw_vesting.py` - withdraw from vesting balance of one account to specified account
 * `withdraw_vesting_multi.py` - withdraw from vesting balance of multiple accounts to specified account
 
