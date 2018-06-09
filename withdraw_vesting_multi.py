@@ -6,9 +6,9 @@ import argparse
 import logging
 import yaml
 import traceback
-from piston import Steem
-from piston.account import Account
-from piston.converter import Converter
+from golos import Steem
+from golos.account import Account
+from golos.converter import Converter
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def main():
     log.debug('broadcast: %s', args.broadcast)
     # toggle args.broadcast
     b = not args.broadcast
-    golos = Steem(node=conf['nodes_old'], nobroadcast=b, keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])
 
     cv = Converter(golos)
     min_balance = cv.sp_to_vests(args.min_balance)
@@ -55,7 +55,7 @@ def main():
     for account in conf['accs']:
 
         b = golos.get_balances(account=account)
-        vests = b['vesting_shares']
+        vests = b['available']['GESTS']
         withdraw_amount = vests - min_balance
 
         log.info('withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(

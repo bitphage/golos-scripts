@@ -3,9 +3,9 @@
 import argparse
 import yaml
 
-from piston import Steem
-from piston.account import Account
-from piston.converter import Converter
+from golos import Steem
+from golos.account import Account
+from golos.converter import Converter
 from pprint import pprint
 
 def main():
@@ -23,19 +23,20 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], nobroadcast=True)
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=True)
 
-    a = Account(args.account, steem_instance=golos)
+    a = Account(args.account, steemd_instance=golos)
     b = a.get_balances()
     cv = Converter(golos)
-    gp = cv.vests_to_sp(b['VESTS'].amount)
+    gp = cv.vests_to_sp(b['total']['GESTS'])
 
-    print('{:<15}{:>18.3f}'.format('SAVINGS_{}:'.format(b['SAVINGS_SBD'].asset), b['SAVINGS_SBD'].amount))
-    print('{:<15}{:>18.3f}'.format('SAVINGS_{}:'.format(b['SAVINGS_STEEM'].asset), b['SAVINGS_STEEM'].amount))
-    print('{:<15}{:>18.3f}'.format('{}:'.format(b['SBD'].asset), b['SBD'].amount))
-    print('{:<15}{:>18.3f}'.format('{}:'.format(b['STEEM'].asset), b['STEEM'].amount))
-    print('{:<15}{:>18.3f}'.format('GP:', gp, b['STEEM'].asset))
-    print('{:<15}{:>18.3f}'.format('M{}:'.format(b['VESTS'].asset), b['VESTS'].amount/1000000))
+    for asset in b['savings']:
+        print('{:<15}{:>18.3f}'.format('SAVINGS_{}'.format(asset), b['savings'][asset]))
+    for asset in b['total']:
+        print('{:<15}{:>18.3f}'.format('{}:'.format(asset), b['available'][asset]))
+
+    print('{:<15}{:>18.3f}'.format('GP:', gp))
+    print('{:<15}{:>18.3f}'.format('MGESTS:', b['total']['GESTS']/1000000))
 
 if __name__ == '__main__':
     main()

@@ -4,9 +4,9 @@ import argparse
 import yaml
 import logging
 
-from piston import Steem
-from piston.account import Account
-from piston.converter import Converter
+from golos import Steem
+from golos.account import Account
+from golos.converter import Converter
 from pprint import pprint
 
 log = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], nobroadcast=True)
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=True)
 
     if not args.no_header:
         print('{:<20} {:>10} {:>11} {:>11}'.format('Account', 'GBG', 'GOLOS', 'GP'))
@@ -51,17 +51,15 @@ def main():
     sum_golos = float()
     sum_gp = float()
     for acc in conf['accs']:
-        a = Account(acc, steem_instance=golos)
+        a = Account(acc, steemd_instance=golos)
         b = a.get_balances()
         cv = Converter(golos)
-        gp = cv.vests_to_sp(b['VESTS'].amount)
+        gp = cv.vests_to_sp(b['total']['GESTS'])
 
-        total_sbd = b['SAVINGS_SBD'].amount + b['SBD'].amount
-        total_steem = b['SAVINGS_STEEM'].amount + b['STEEM'].amount
-        print('{:<20} {:>10}  {:>10}  {:>10.0f}'.format(acc, total_sbd, total_steem, gp))
+        print('{:<20} {:>10}  {:>10}  {:>10.0f}'.format(acc, b['total']['GBG'], b['total']['GOLOS'], gp))
 
-        sum_gbg += total_sbd
-        sum_golos += total_steem
+        sum_gbg += b['total']['GBG']
+        sum_golos += b['total']['GOLOS']
         sum_gp += gp
 
     if not args.no_sum:

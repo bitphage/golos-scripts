@@ -7,10 +7,10 @@ import logging
 import yaml
 
 from pprint import pprint
-from piston import Steem
-from piston.account import Account
-from pistonbase.account import PasswordKey, PublicKey
-from pistonbase import operations
+from golos import Steem
+from golos.account import Account
+from golosbase.account import PasswordKey, PublicKey
+from golosbase import operations
 
 import functions
 
@@ -55,9 +55,9 @@ def main():
         conf = yaml.load(ymlfile)
 
     b = not args.broadcast
-    golos = Steem(node=conf['nodes_old'], nobroadcast=False, keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=False, keys=conf['keys'])
     account_name = args.account
-    account = Account(args.account, steem_instance=golos)
+    account = Account(args.account, steemd_instance=golos)
 
     # random password
     if args.password:
@@ -80,7 +80,7 @@ def main():
         pubkey = k.get_public_key()
 
         # pubkey with correct prefix
-        key[key_type] = format(pubkey, golos.rpc.chain_params["prefix"])
+        key[key_type] = format(pubkey, golos.chain_params["prefix"])
         print('{} public: {}\n'.format(key_type, key[key_type]))
 
 
@@ -105,12 +105,12 @@ def main():
             'posting': {'account_auths': posting_accounts_authority,
                 'key_auths': posting_key_authority,
                 'weight_threshold': 1},
-            'prefix': golos.rpc.chain_params["prefix"]
+            'prefix': golos.chain_params["prefix"]
          }
 
 
     #pprint(s)
-    op = operations.Account_update(**s)
+    op = operations.AccountUpdate(**s)
 
     golos.finalizeOp(op, args.account, "owner")
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8aa7105e7388a5ec6251c69b7c9a5b9af10613a2667399c02e54557f055ae00c"
+            "sha256": "89c83c7171e9991e9914153d538fb73eb80070c8dbf6f9b5d3e756f8408964b5"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -29,8 +29,9 @@
         ]
     },
     "default": {
-        "golos-piston": {
-            "git": "https://github.com/bitfag/golos-piston.git"
+        "golos": {
+            "git": "https://github.com/bitfag/golos-python.git",
+            "ref": "golos-v0.18"
         },
         "pyaml": {
             "hashes": [

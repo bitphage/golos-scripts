@@ -5,9 +5,9 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
-from piston.account import Account
-from piston.amount import Amount
+from golos import Steem
+from golos.account import Account
+from golos.amount import Amount
 
 from datetime import datetime
 from datetime import timedelta
@@ -55,7 +55,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
     ratio = functions.get_bandwidth(golos, args.account, args.type)
 

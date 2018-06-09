@@ -5,8 +5,8 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
-from piston.account import Account
+from golos import Steem
+from golos.account import Account
 from pprint import pprint
 
 from datetime import timedelta
@@ -44,9 +44,9 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
-    c = golos.rpc.get_account_count(api='database_api')
+    c = golos.get_account_count()
     log.debug('total accounts: {}'.format(c))
 
     accs = golos.get_all_usernames()
@@ -61,7 +61,7 @@ def main():
 
     start = datetime.utcnow()
     for acc in accs:
-        r = golos.rpc.get_conversion_requests(acc, api='database_api')
+        r = golos.get_conversion_requests(acc)
         if r:
             d = datetime.strptime(r[0]['conversion_date'], '%Y-%m-%dT%H:%M:%S')
             print('{:<16} {:<18} {:>7}'.format(

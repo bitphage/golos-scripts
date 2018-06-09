@@ -5,8 +5,8 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
-from pistonbase.account import PasswordKey, PublicKey, PrivateKey
+from golos import Steem
+from golosbase.account import PasswordKey, PublicKey, PrivateKey
 
 import functions
 
@@ -43,7 +43,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
     # random password
     if args.password:

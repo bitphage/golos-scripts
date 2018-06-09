@@ -6,7 +6,7 @@ import argparse
 import logging
 import yaml
 import traceback
-from piston import Steem
+from golos import Steem
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def main():
     log.debug('broadcast: %s', args.broadcast)
     # toggle args.broadcast
     b = not args.broadcast
-    golos = Steem(node=conf['nodes_old'], nobroadcast=b, keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])
 
     golos.transfer_to_vesting(args.amount, to=args.to, account=args.f)
 

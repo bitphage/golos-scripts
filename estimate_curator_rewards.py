@@ -9,7 +9,8 @@ import re
 
 from datetime import datetime
 from datetime import timedelta
-from piston import Steem
+from golos import Steem
+from golos.amount import Amount
 
 import functions
 
@@ -43,7 +44,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
     # extract author and post permlink from args.url
     p = re.search('@(.*?)/([^/]+)', args.url)
@@ -59,7 +60,9 @@ def main():
 
 
     post = functions.get_post_content(golos, author, post_permlink)
-    #from pprint import pprint
+    total_pending_payout_value = post['total_pending_payout_value'].amount
+    from pprint import pprint
+    #pprint(post)
     #pprint(post.export())
     if not post:
         log.critical('could not find post in blockchain')
@@ -74,7 +77,7 @@ def main():
         log.critical('curation rewards disabled')
         sys.exit(1)
 
-    pending_payout = functions.convert_gbg_to_golos(golos, post['total_pending_payout_value'].amount)
+    pending_payout = functions.convert_gbg_to_golos(golos, total_pending_payout_value)
     active_votes = sorted(post['active_votes'], key=lambda k: datetime.strptime(k['time'], '%Y-%m-%dT%H:%M:%S'))
     sum_weight = int()
 

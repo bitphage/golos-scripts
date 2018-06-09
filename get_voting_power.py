@@ -5,7 +5,7 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
+from golos import Steem
 
 import functions
 
@@ -40,7 +40,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
     vp = functions.get_voting_power(golos, args.account)
     log.info('VP of {}: {:.2f}'.format(args.account, vp))
 

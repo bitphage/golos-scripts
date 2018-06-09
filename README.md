@@ -24,7 +24,7 @@ This is a python scripts collection for golos blockchain network.
 Requirements
 ------------
 
-* golos node 0.17+
+* golos node 0.18+
 
 Installation using pipenv
 -------------------------

@@ -8,8 +8,8 @@ import yaml
 import hashlib
 
 from binascii import hexlify
-from piston import Steem
-from pistonbase.account import PrivateKey, PublicKey
+from golos import Steem
+from golosbase.account import PrivateKey, PublicKey
 
 import functions
 
@@ -40,7 +40,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], nobroadcast=False, keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=False, keys=conf['keys'])
 
     password = functions.generate_password()
 
@@ -51,7 +51,7 @@ def main():
     print('private: {}'.format(str(privkey))) # we need explicit str() conversion!
 
     # pubkey with correct prefix
-    key = format(privkey.pubkey, golos.rpc.chain_params["prefix"])
+    key = format(privkey.pubkey, golos.chain_params["prefix"])
     print('public: {}'.format(key))
 
 if __name__ == '__main__':

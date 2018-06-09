@@ -5,8 +5,8 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
-from piston.amount import Amount
+from golos import Steem
+from golos.amount import Amount
 from pprint import pprint
 
 import functions
@@ -39,7 +39,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
     if args.debug:
         verbose = True

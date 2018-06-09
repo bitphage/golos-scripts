@@ -8,10 +8,10 @@ import yaml
 
 from datetime import datetime
 from pprint import pprint
-from piston import Steem
-from piston.account import Account
-from piston.amount import Amount
-from piston.converter import Converter
+from golos import Steem
+from golos.account import Account
+from golos.amount import Amount
+from golos.converter import Converter
 
 import functions
 
@@ -49,9 +49,9 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
-    account = Account(args.account, steem_instance=golos)
+    account = Account(args.account, steemd_instance=golos)
     history = account.rawhistory(only_ops=['transfer'], limit=args.limit)
 
     for item in history:

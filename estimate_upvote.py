@@ -7,8 +7,8 @@ import logging
 import yaml
 import re
 
-from piston import Steem
-from piston.amount import Amount
+from golos import Steem
+from golos.amount import Amount
 
 import functions
 
@@ -48,7 +48,7 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
     if args.curve == 'quadratic':
         if not args.url:

@@ -5,10 +5,10 @@ import json
 import argparse
 import logging
 import yaml
-from piston import Steem
-from piston.account import Account
-from piston.amount import Amount
-from piston.converter import Converter
+from golos import Steem
+from golos.account import Account
+from golos.amount import Amount
+from golos.converter import Converter
 from pprint import pprint
 
 from datetime import timedelta
@@ -45,9 +45,9 @@ def main():
     with open(args.config, 'r') as ymlfile:
         conf = yaml.load(ymlfile)
 
-    golos = Steem(node=conf['nodes_old'], keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
-    c = golos.rpc.get_account_count(api='database_api')
+    c = golos.get_account_count()
     log.debug('total accounts: {}'.format(c))
 
     accs = golos.get_all_usernames()
@@ -55,7 +55,7 @@ def main():
     start = datetime.utcnow()
 
     # get all accounts in one batch
-    all_accounts = golos.rpc.get_accounts(accs, api='database_api')
+    all_accounts = golos.get_accounts(accs)
 
     # we well get summary info about total withdrawal rate and number of accounts
     sum_rate = float()
