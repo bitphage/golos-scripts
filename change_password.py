@@ -55,7 +55,7 @@ def main():
         conf = yaml.load(ymlfile)
 
     b = not args.broadcast
-    golos = Steem(nodes=conf['nodes_old'], no_broadcast=False, keys=conf['keys'])
+    golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])
     account_name = args.account
     account = Account(args.account, steemd_instance=golos)
 
