@@ -72,7 +72,7 @@ def main():
 
             if args.notify:
                 msg = conf['notify_message'].format(median, bid)
-                functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GBG', msg)
+                functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GOLOS', msg)
 
     log.debug('getting conversion requests took {:.2f} seconds'.format(
         (datetime.utcnow() - start).total_seconds()))
