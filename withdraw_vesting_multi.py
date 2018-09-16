@@ -54,18 +54,19 @@ def main():
 
     for account in conf['accs']:
 
-        b = golos.get_balances(account=account)
+        a = Account(account, steemd_instance=golos)
+        b = a.get_balances()
         vests = b['available']['GESTS']
         withdraw_amount = vests - min_balance
 
         log.info('withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
-                                                              withdraw_amount.amount/1000000,
-                                                              cv.vests_to_sp(withdraw_amount.amount),
+                                                              withdraw_amount/1000000,
+                                                              cv.vests_to_sp(withdraw_amount),
                                                               account,
                                                               args.to
                                                               ))
         golos.set_withdraw_vesting_route(args.to, percentage=100, account=account, auto_vest=False)
-        golos.withdraw_vesting(withdraw_amount.amount, account=account)
+        golos.withdraw_vesting(withdraw_amount, account=account)
 
 if __name__ == '__main__':
     main()
