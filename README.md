@@ -12,6 +12,7 @@ This is a python scripts collection for golos blockchain network.
 * `estimate_upvote.py` - estimate author payout simulating someone's upvote
 * `estimate_curator_rewards.py` - estimate real curators rewards
 * `estimate_median_price.py` - look up current witnesses price feeds and calculate new expected median price
+* `get_post.py` - get and print post/comment
 * `get_voting_power.py` - calculate current voting power of specified account
 * `get_bandwidth.py` - calculate used bandwidth of the account. Can be used in scripting as monitoring tool (`-w 75 -q`)
 * `get_vesting_withdraws.py` - find all vesting withdrawals with rates and dates
