@@ -4,6 +4,7 @@ import argparse
 import yaml
 import re
 import logging
+import sys
 
 from golos import Steem
 from pprint import pprint
@@ -58,13 +59,15 @@ def main():
     golos = Steem(nodes=conf['nodes_old'])
     post = functions.get_post_content(golos, author, post_permlink)
 
+    if not post:
+        sys.exit(1)
+
     if args.tags_only:
         pprint(post['tags'])
     elif args.body:
         print(post['body'])
     else:
         pprint(dict(post))
-
 
 if __name__ == '__main__':
     main()
