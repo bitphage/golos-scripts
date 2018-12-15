@@ -280,7 +280,10 @@ def get_bandwidth(steemd_instance, account, type='market'):
 
     global_props = steemd_instance.get_dynamic_global_properties()
 
-    account_vshares = Amount(a['vesting_shares']).amount
+    account_vshares = Amount(a['vesting_shares'])['amount']
+    delegated_vshares = Amount(a['delegated_vesting_shares'])['amount']
+    received_vshares = Amount(a['received_vesting_shares'])['amount']
+    account_vshares = account_vshares - delegated_vshares + received_vshares
     log.debug('{:.<30}{:.>30.0f}'.format('account_vshares:', account_vshares))
 
     # get bandwidth info from network
