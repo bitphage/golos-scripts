@@ -27,8 +27,8 @@ def main():
             help='enable debug output'),
     parser.add_argument('-c', '--config', default='./common.yml',
             help='specify custom path for config file')
-    parser.add_argument('-m', '--min-mgests', default=100, type=float,
-            help='look for account with vesting shares not less than X MGESTS, default is 100')
+    parser.add_argument('-m', '--min-mgests', default=0, type=float,
+            help='look for account with vesting shares not less than X MGESTS, default is 0')
     parser.add_argument('-a', '--account',
             help='get info for single account')
     args = parser.parse_args()
