@@ -29,6 +29,8 @@ def main():
             help='specify custom path for config file')
     parser.add_argument('-m', '--min-mgests', default=100, type=float,
             help='look for account with vesting shares not less than X MGESTS, default is 100')
+    parser.add_argument('-a', '--account',
+            help='get info for single account')
     args = parser.parse_args()
 
     # create logger
@@ -50,7 +52,10 @@ def main():
     c = golos.get_account_count()
     log.debug('total accounts: {}'.format(c))
 
-    accs = golos.get_all_usernames()
+    if args.account:
+        accs = [args.account]
+    else:
+        accs = golos.get_all_usernames()
 
     start = datetime.utcnow()
 
