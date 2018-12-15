@@ -22,6 +22,7 @@ This is a python scripts collection for golos blockchain network.
 * `find_rewards.py` - scan account history to find author or curation rewards
 * `withdraw_vesting.py` - withdraw from vesting balance of one account to specified account
 * `withdraw_vesting_multi.py` - withdraw from vesting balance of multiple accounts to specified account
+* `delegate_vesting_shares.py` - script to delegate vesting shares
 * `witness_approve.py` - vote for witness
 * `witness_disapprove.py` - remove vote from witness
 
