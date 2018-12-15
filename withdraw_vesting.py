@@ -24,7 +24,7 @@ def main():
     parser.add_argument('-c', '--config', default='./common.yml',
             help='specify custom path for config file')
     parser.add_argument('-m', '--min-balance', default=5, type=float,
-            help='minimal Golos Power balance which will be left on withdrawing account')
+            help='minimal Golos Power balance which will be left on withdrawing account (default: 5)')
     parser.add_argument('-t', '--to',
             help='destination account (optional)'),
     parser.add_argument('account',
