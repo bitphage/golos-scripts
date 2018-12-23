@@ -61,14 +61,11 @@ def main():
 
     start = datetime.utcnow()
     for acc in accs:
-        r = golos.get_conversion_requests(acc)
-        if r:
-            d = datetime.strptime(r[0]['conversion_date'], '%Y-%m-%dT%H:%M:%S')
-            print('{:<16} {:<18} {:>7}'.format(
-                                    r[0]['owner'],
-                                    r[0]['amount'],
-                                    d.strftime('%Y-%m-%d %H:%M')
-                                    ))
+        requests = golos.get_conversion_requests(acc)
+        for request in requests:
+            d = datetime.strptime(request['conversion_date'], '%Y-%m-%dT%H:%M:%S')
+            print('{:<16} {:<18} {:>7}'
+                  .format(request['owner'], request['amount'], d.strftime('%Y-%m-%d %H:%M')))
 
             if args.notify:
                 msg = conf['notify_message'].format(median, bid)
