@@ -67,9 +67,9 @@ def main():
             print('{:<16} {:<18} {:>7}'
                   .format(request['owner'], request['amount'], d.strftime('%Y-%m-%d %H:%M')))
 
-            if args.notify:
-                msg = conf['notify_message'].format(median, bid)
-                functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GOLOS', msg)
+        if requests and args.notify:
+            msg = conf['notify_message'].format(median, bid)
+            functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GOLOS', msg)
 
     log.debug('getting conversion requests took {:.2f} seconds'.format(
         (datetime.utcnow() - start).total_seconds()))
