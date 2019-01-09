@@ -5,12 +5,15 @@ import json
 import argparse
 import logging
 import yaml
-from golos import Steem
-from golos.account import Account
-from pprint import pprint
 
+from pprint import pprint
+from decimal import Decimal
 from datetime import timedelta
 from datetime import datetime
+
+from golos import Steem
+from golos.account import Account
+from golos.amount import Amount
 
 import functions
 
@@ -62,10 +65,17 @@ def main():
     start = datetime.utcnow()
     for acc in accs:
         requests = golos.get_conversion_requests(acc)
+        total = Decimal('0.000')
         for request in requests:
+            amount = request['amount'].split()[0]
+            total += Decimal(amount)
             d = datetime.strptime(request['conversion_date'], '%Y-%m-%dT%H:%M:%S')
             print('{:<16} {:<18} {:>7}'
                   .format(request['owner'], request['amount'], d.strftime('%Y-%m-%d %H:%M')))
+
+        if len(requests) > 1:
+            print('{:<16} {:<18} {:<7}'
+                  .format(request['owner'], total, 'Total'))
 
         if requests and args.notify:
             msg = conf['notify_message'].format(median, bid)
