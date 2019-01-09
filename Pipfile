@@ -8,7 +8,7 @@ name = "pypi"
 [packages]
 
 pyaml = "*"
-golos = {git = "https://github.com/bitfag/golos-python.git", ref = "golos-v0.18"}
+golos = {git = "https://github.com/bitfag/golos-python.git"}
 
 
 [dev-packages]
