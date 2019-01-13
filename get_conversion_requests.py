@@ -63,6 +63,7 @@ def main():
             sys.exit(1)
 
     start = datetime.utcnow()
+    total_sum = Decimal('0.000')
     for acc in accs:
         requests = golos.get_conversion_requests(acc)
         total = Decimal('0.000')
@@ -72,6 +73,7 @@ def main():
             d = datetime.strptime(request['conversion_date'], '%Y-%m-%dT%H:%M:%S')
             print('{:<16} {:<18} {:>7}'
                   .format(request['owner'], request['amount'], d.strftime('%Y-%m-%d %H:%M')))
+        total_sum += total
 
         if len(requests) > 1:
             print('{:<16} {:<18} {:<7}'
@@ -81,6 +83,7 @@ def main():
             msg = conf['notify_message'].format(median, bid)
             functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GOLOS', msg)
 
+    print('Total on conversion: {}'.format(total_sum))
     log.debug('getting conversion requests took {:.2f} seconds'.format(
         (datetime.utcnow() - start).total_seconds()))
 
