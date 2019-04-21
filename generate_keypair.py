@@ -15,15 +15,15 @@ import functions
 
 log = logging.getLogger('functions')
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='This script is for generating a keypair.',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
+        description='This script is for generating a keypair.',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
     args = parser.parse_args()
 
     # create logger
@@ -48,11 +48,12 @@ def main():
     s = hashlib.sha256(a).digest()
 
     privkey = PrivateKey(hexlify(s).decode('ascii'))
-    print('private: {}'.format(str(privkey))) # we need explicit str() conversion!
+    print('private: {}'.format(str(privkey)))  # we need explicit str() conversion!
 
     # pubkey with correct prefix
     key = format(privkey.pubkey, golos.chain_params["prefix"])
     print('public: {}'.format(key))
+
 
 if __name__ == '__main__':
     main()

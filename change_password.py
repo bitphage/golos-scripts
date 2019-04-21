@@ -16,28 +16,20 @@ import functions
 
 log = logging.getLogger('functions')
 
-key_types = [
-    'posting',
-    'active',
-    'owner',
-    'memo'
-]
+key_types = ['posting', 'active', 'owner', 'memo']
+
 
 def main():
 
     parser = argparse.ArgumentParser(
-            description='This script is for changing account keys. By default, random password are geneeated.',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('account',
-            help='account name'),
-    parser.add_argument('-p', '--password',
-            help='manually specify a password'),
-    parser.add_argument('--broadcast', action='store_true', default=False,
-            help='broadcast transactions'),
+        description='This script is for changing account keys. By default, random password are geneeated.',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('account', help='account name'),
+    parser.add_argument('-p', '--password', help='manually specify a password'),
+    parser.add_argument('--broadcast', action='store_true', default=False, help='broadcast transactions'),
     args = parser.parse_args()
 
     # create logger
@@ -74,7 +66,7 @@ def main():
         k = PasswordKey(account_name, password, role=key_type)
 
         privkey = k.get_private_key()
-        print('{} private: {}'.format(key_type, str(privkey))) # we need explicit str() conversion!
+        print('{} private: {}'.format(key_type, str(privkey)))  # we need explicit str() conversion!
 
         # pubkey with default prefix GPH
         pubkey = k.get_public_key()
@@ -82,8 +74,6 @@ def main():
         # pubkey with correct prefix
         key[key_type] = format(pubkey, golos.chain_params["prefix"])
         print('{} public: {}\n'.format(key_type, key[key_type]))
-
-
 
     # prepare for json format
     owner_key_authority = [[key['owner'], 1]]
@@ -94,25 +84,27 @@ def main():
     posting_accounts_authority = []
 
     s = {
-            'account': account_name,
-            'memo_key': key['memo'],
-            'owner': {'account_auths': owner_accounts_authority,
-                'key_auths': owner_key_authority,
-                'weight_threshold': 1},
-            'active': {'account_auths': active_accounts_authority,
-                'key_auths': active_key_authority,
-                'weight_threshold': 1},
-            'posting': {'account_auths': posting_accounts_authority,
-                'key_auths': posting_key_authority,
-                'weight_threshold': 1},
-            'prefix': golos.chain_params["prefix"]
-         }
+        'account': account_name,
+        'memo_key': key['memo'],
+        'owner': {'account_auths': owner_accounts_authority, 'key_auths': owner_key_authority, 'weight_threshold': 1},
+        'active': {
+            'account_auths': active_accounts_authority,
+            'key_auths': active_key_authority,
+            'weight_threshold': 1,
+        },
+        'posting': {
+            'account_auths': posting_accounts_authority,
+            'key_auths': posting_key_authority,
+            'weight_threshold': 1,
+        },
+        'prefix': golos.chain_params["prefix"],
+    }
 
-
-    #pprint(s)
+    # pprint(s)
     op = operations.AccountUpdate(**s)
 
     golos.finalizeOp(op, args.account, "owner")
+
 
 if __name__ == '__main__':
     main()

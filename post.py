@@ -15,21 +15,15 @@ log = logging.getLogger('functions')
 def main():
     parser = argparse.ArgumentParser(
         description='publish post to the blockchain',
-        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-                        help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-                        help='specify custom path for config file')
-    parser.add_argument('account',
-                        help='account to post from')
-    parser.add_argument('title',
-                        help='post title')
-    parser.add_argument('tags',
-                        help='specify a comma-separated tag list')
-    parser.add_argument('permlink',
-                        help='specify post permlink')
-    parser.add_argument('file',
-                        help='path to file containing post in markdown format')
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('account', help='account to post from')
+    parser.add_argument('title', help='post title')
+    parser.add_argument('tags', help='specify a comma-separated tag list')
+    parser.add_argument('permlink', help='specify post permlink')
+    parser.add_argument('file', help='path to file containing post in markdown format')
     args = parser.parse_args()
 
     # create logger
@@ -54,6 +48,7 @@ def main():
     tags = args.tags.split(',')
 
     golos.post(args.title, body, author=args.account, permlink=args.permlink, tags=tags)
+
 
 if __name__ == '__main__':
     main()

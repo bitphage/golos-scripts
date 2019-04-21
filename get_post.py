@@ -13,21 +13,15 @@ import functions
 
 log = logging.getLogger(__name__)
 
+
 def main():
 
-    parser = argparse.ArgumentParser(
-            description='get post with metadata',
-            epilog='Report bugs to: ')
-    parser.add_argument('--tags-only', action='store_true',
-                        help='show only post tags')
-    parser.add_argument('--body', action='store_true',
-                        help='show only body')
-    parser.add_argument('-c', '--config', default='./common.yml',
-                        help='specify custom path for config file')
-    parser.add_argument('-d', '--debug', action='store_true',
-                        help='enable debug output'),
-    parser.add_argument('url',
-                        help='post id in format @author/article or full url')
+    parser = argparse.ArgumentParser(description='get post with metadata', epilog='Report bugs to: ')
+    parser.add_argument('--tags-only', action='store_true', help='show only post tags')
+    parser.add_argument('--body', action='store_true', help='show only body')
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('url', help='post id in format @author/article or full url')
     args = parser.parse_args()
 
     # create logger
@@ -68,6 +62,7 @@ def main():
         print(post['body'])
     else:
         pprint(dict(post))
+
 
 if __name__ == '__main__':
     main()

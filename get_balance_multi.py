@@ -11,19 +11,17 @@ from pprint import pprint
 
 log = logging.getLogger(__name__)
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='show multiple users balances',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('--no-header', action='store_true',
-            help='supress header')
-    parser.add_argument('--no-sum', action='store_true',
-            help='supress summary output')
-    parser.add_argument('-d', '--debug', action='store_true',
-        help='enable debug output'),
+        description='show multiple users balances',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('--no-header', action='store_true', help='supress header')
+    parser.add_argument('--no-sum', action='store_true', help='supress summary output')
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
 
     args = parser.parse_args()
 

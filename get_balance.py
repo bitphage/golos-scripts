@@ -8,15 +8,14 @@ from golos.account import Account
 from golos.converter import Converter
 from pprint import pprint
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='show user balances',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('account',
-            help='account name')
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
+        description='show user balances', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues'
+    )
+    parser.add_argument('account', help='account name')
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
     args = parser.parse_args()
 
     # parse config
@@ -36,7 +35,8 @@ def main():
         print('{:<15}{:>18.3f}'.format('{}:'.format(asset), b['available'][asset]))
 
     print('{:<15}{:>18.3f}'.format('GP:', gp))
-    print('{:<15}{:>18.3f}'.format('MGESTS:', b['total']['GESTS']/1000000))
+    print('{:<15}{:>18.3f}'.format('MGESTS:', b['total']['GESTS'] / 1000000))
+
 
 if __name__ == '__main__':
     main()

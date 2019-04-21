@@ -15,14 +15,12 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Calculate actual voting power',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('account',
-            help='specify account which VP should be estimated')
+        description='Calculate actual voting power',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('account', help='specify account which VP should be estimated')
 
     args = parser.parse_args()
 

@@ -21,18 +21,16 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Scan account history looking for transfers',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('-a', '--amount', type=float, default=0,
-            help='minimal transfer amount to look for (default: 0)')
-    parser.add_argument('-l', '--limit', type=int, default=50,
-            help='limit number of transactions to scan, default: 50')
-    parser.add_argument('account',
-            help='account to scan')
+        description='Scan account history looking for transfers',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument(
+        '-a', '--amount', type=float, default=0, help='minimal transfer amount to look for (default: 0)'
+    )
+    parser.add_argument('-l', '--limit', type=int, default=50, help='limit number of transactions to scan, default: 50')
+    parser.add_argument('account', help='account to scan')
     args = parser.parse_args()
 
     # create logger
@@ -55,8 +53,8 @@ def main():
     history = account.rawhistory(only_ops=['transfer'], limit=args.limit)
 
     for item in history:
-        #pprint(item)
-        
+        # pprint(item)
+
         timestamp = datetime.strptime(item[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
         t_from = item[1]['op'][1]['from']
         to = item[1]['op'][1]['to']
@@ -64,6 +62,7 @@ def main():
 
         if amount.amount > args.amount:
             print('{}: {:<16} -> {:<16}, {}'.format(timestamp, t_from, to, amount))
+
 
 if __name__ == '__main__':
     main()

@@ -12,21 +12,17 @@ import functions
 
 log = logging.getLogger('functions')
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Create account',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-                        help='enable debug output')
-    parser.add_argument('-c', '--config', default='./common.yml',
-                        help='specify custom path for config file')
-    parser.add_argument('-p', '--password',
-                        help='manually specify a password')
-    parser.add_argument('creator',
-                        help='parent account who will create child account')
-    parser.add_argument('account',
-                        help='new account name')
+        description='Create account', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues'
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output')
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('-p', '--password', help='manually specify a password')
+    parser.add_argument('creator', help='parent account who will create child account')
+    parser.add_argument('account', help='new account name')
     args = parser.parse_args()
 
     # create logger
@@ -54,6 +50,7 @@ def main():
     print('password: {}\n'.format(password))
 
     golos.create_account(args.account, creator=args.creator, password=password)
+
 
 if __name__ == '__main__':
     main()

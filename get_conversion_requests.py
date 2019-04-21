@@ -23,16 +23,13 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Find all GBG conversion requests',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('-n', '--notify', action='store_true',
-            help='send message to accounts who uses conversions')
-    parser.add_argument('-a', '--account',
-            help='get request for single account')
+        description='Find all GBG conversion requests',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('-n', '--notify', action='store_true', help='send message to accounts who uses conversions')
+    parser.add_argument('-a', '--account', help='get request for single account')
     args = parser.parse_args()
 
     # create logger
@@ -79,22 +76,24 @@ def main():
         for request in requests:
             amount = request['amount'].split()[0]
             total += Decimal(amount)
-            print('{:<16} {:<18} {:>7}'
-                  .format(request['owner'], request['amount'], request['date'].strftime('%Y-%m-%d %H:%M')))
+            print(
+                '{:<16} {:<18} {:>7}'.format(
+                    request['owner'], request['amount'], request['date'].strftime('%Y-%m-%d %H:%M')
+                )
+            )
 
         total_sum += total
 
         if len(requests) > 1:
-            print('{:<16} {:<18} {:<7}'
-                  .format(request['owner'], total, 'Total'))
+            print('{:<16} {:<18} {:<7}'.format(request['owner'], total, 'Total'))
 
         if requests and args.notify:
             msg = conf['notify_message'].format(median, bid)
             functions.transfer(golos, conf['notify_account'], acc, '0.001', 'GOLOS', msg)
 
     print('Total on conversion: {}'.format(total_sum))
-    log.debug('getting conversion requests took {:.2f} seconds'.format(
-        (datetime.utcnow() - start).total_seconds()))
+    log.debug('getting conversion requests took {:.2f} seconds'.format((datetime.utcnow() - start).total_seconds()))
+
 
 if __name__ == '__main__':
     main()

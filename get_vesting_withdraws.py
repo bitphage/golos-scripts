@@ -18,19 +18,23 @@ import functions
 
 log = logging.getLogger('functions')
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Find all vesting withdrawals with rates and dates',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('-m', '--min-mgests', default=0, type=float,
-            help='look for account with vesting shares not less than X MGESTS, default is 0')
-    parser.add_argument('-a', '--account',
-            help='get info for single account')
+        description='Find all vesting withdrawals with rates and dates',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument(
+        '-m',
+        '--min-mgests',
+        default=0,
+        type=float,
+        help='look for account with vesting shares not less than X MGESTS, default is 0',
+    )
+    parser.add_argument('-a', '--account', help='get info for single account')
     args = parser.parse_args()
 
     # create logger
@@ -83,19 +87,15 @@ def main():
             sum_rate += rate_gp
             count += 1
 
-            print('{:<16} {:<18} {:>6.0f} {:>8.0f}'.format(
-                                       a['name'],
-                                       d.strftime('%Y-%m-%d %H:%M'),
-                                       rate_gp, gp))
+            print('{:<16} {:<18} {:>6.0f} {:>8.0f}'.format(a['name'], d.strftime('%Y-%m-%d %H:%M'), rate_gp, gp))
 
-# non-pretty format
-#            log.info('{} {} {:.0f} / {:.0f}'.format(
-#                                       a['name'],
-#                                       d.strftime('%Y-%m-%d %H:%M'),
-#                                       rate_gp, gp))
+    # non-pretty format
+    #            log.info('{} {} {:.0f} / {:.0f}'.format(
+    #                                       a['name'],
+    #                                       d.strftime('%Y-%m-%d %H:%M'),
+    #                                       rate_gp, gp))
 
-    log.debug('accounts iteration took {:.2f} seconds'.format(
-        (datetime.utcnow() - start).total_seconds()))
+    log.debug('accounts iteration took {:.2f} seconds'.format((datetime.utcnow() - start).total_seconds()))
 
     log.info('numbers of matching accounts on vesting withdrawal: {}'.format(count))
     log.info('sum rate: {:.0f}'.format(sum_rate))

@@ -17,12 +17,11 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Get witnesses price feed and estimate futher median price',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
+        description='Get witnesses price feed and estimate futher median price',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
     args = parser.parse_args()
 
     # create logger
@@ -49,6 +48,7 @@ def main():
     log.info('current median price: {:.3f}'.format(functions.get_median_price(golos)))
     log.info('estimated median price: {:.3f}'.format(functions.estimate_median_price(golos, verbose=verbose)))
     log.info('estimated median price (from feed): {:.3f}'.format(functions.estimate_median_price_from_feed(golos)))
+
 
 if __name__ == '__main__':
     main()

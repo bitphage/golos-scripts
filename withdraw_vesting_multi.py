@@ -12,21 +12,24 @@ from golos.converter import Converter
 
 log = logging.getLogger(__name__)
 
+
 def main():
 
     parser = argparse.ArgumentParser(
-            description='withdraw from vesting balance of multiple accounts to specified account',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-        help='enable debug output'),
-    parser.add_argument('--broadcast', action='store_true', default=False,
-            help='broadcast transactions'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('-m', '--min-balance', default=5, type=float,
-            help='minimal Golos Power balance which will be left on withdrawing account')
-    parser.add_argument('to',
-            help='to'),
+        description='withdraw from vesting balance of multiple accounts to specified account',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('--broadcast', action='store_true', default=False, help='broadcast transactions'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument(
+        '-m',
+        '--min-balance',
+        default=5,
+        type=float,
+        help='minimal Golos Power balance which will be left on withdrawing account',
+    )
+    parser.add_argument('to', help='to'),
     args = parser.parse_args()
 
     # CREATE logger
@@ -59,14 +62,14 @@ def main():
         vests = b['available']['GESTS']
         withdraw_amount = vests - min_balance
 
-        log.info('withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
-                                                              withdraw_amount/1000000,
-                                                              cv.vests_to_sp(withdraw_amount),
-                                                              account,
-                                                              args.to
-                                                              ))
+        log.info(
+            'withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
+                withdraw_amount / 1000000, cv.vests_to_sp(withdraw_amount), account, args.to
+            )
+        )
         golos.set_withdraw_vesting_route(args.to, percentage=100, account=account, auto_vest=False)
         golos.withdraw_vesting(withdraw_amount, account=account)
+
 
 if __name__ == '__main__':
     main()

@@ -21,16 +21,19 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-            description='Scan account history looking for author or curator payouts',
-            epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument('-d', '--debug', action='store_true',
-            help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml',
-            help='specify custom path for config file')
-    parser.add_argument('-t', '--type', default='author', choices=['author', 'curator'],
-            help='reward type, "author" or "curator", default: author')
-    parser.add_argument('account',
-            help='account to scan')
+        description='Scan account history looking for author or curator payouts',
+        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument(
+        '-t',
+        '--type',
+        default='author',
+        choices=['author', 'curator'],
+        help='reward type, "author" or "curator", default: author',
+    )
+    parser.add_argument('account', help='account to scan')
     args = parser.parse_args()
 
     # create logger
@@ -59,7 +62,7 @@ def main():
     history = account.rawhistory(only_ops=ops)
 
     for item in history:
-        #pprint(item)
+        # pprint(item)
 
         permlink = item[1]['op'][1]['permlink']
         payout_timestamp = datetime.strptime(item[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
@@ -72,7 +75,12 @@ def main():
         golos_payout = steem_payout.amount + gp
         gpg_repr = sbd_payout.amount + functions.convert_golos_to_gbg(golos, golos_payout, price_source='market')
 
-        print('{} {}: {} {} {:.3f} GP, GBG repr: {:.3f}'.format(payout_timestamp, permlink, sbd_payout, steem_payout, gp, gpg_repr))
+        print(
+            '{} {}: {} {} {:.3f} GP, GBG repr: {:.3f}'.format(
+                payout_timestamp, permlink, sbd_payout, steem_payout, gp, gpg_repr
+            )
+        )
+
 
 if __name__ == '__main__':
     main()

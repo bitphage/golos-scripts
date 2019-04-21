@@ -19,9 +19,10 @@ log = logging.getLogger(__name__)
 
 CONTENT_CONSTANT = 2000000000000
 STEEMIT_100_PERCENT = 10000
-STEEMIT_VOTE_REGENERATION_SECONDS = 5*60*60*24 # 5 days
-STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60*60*24*7 # 7 days
+STEEMIT_VOTE_REGENERATION_SECONDS = 5 * 60 * 60 * 24  # 5 days
+STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60 * 60 * 24 * 7  # 7 days
 STEEMIT_BANDWIDTH_PRECISION = 1000000
+
 
 def get_post_content(steemd_instance, author, permlink):
     """ Wrapper for Steem.get_content()
@@ -38,6 +39,7 @@ def get_post_content(steemd_instance, author, permlink):
         return False
     return p
 
+
 def get_net_rshares(steemd_instance, author, permlink):
     """ Get net_rshares for post
         :param Steem steemd_instance: Steem() instance to use when accesing a RPC
@@ -52,6 +54,7 @@ def get_net_rshares(steemd_instance, author, permlink):
     net_rshares = int(p['net_rshares'])
     log.debug('post net_rshares: %s', net_rshares)
     return net_rshares
+
 
 def calc_rshares(steemd_instance, account, vote_percent):
     """ Calc current rshares for an account
@@ -74,7 +77,7 @@ def calc_rshares(steemd_instance, account, vote_percent):
 
     vesting_shares = b['available']['GESTS']
     sp = cv.vests_to_sp(vesting_shares)
-    rshares = cv.sp_to_rshares(sp, voting_power=voting_power*100, vote_pct=vote_percent*100)
+    rshares = cv.sp_to_rshares(sp, voting_power=voting_power * 100, vote_pct=vote_percent * 100)
 
     return rshares
 
@@ -94,6 +97,7 @@ def get_median_price(steemd_instance):
     log.debug('current median price: %s', price)
     return price
 
+
 def estimate_median_price(steemd_instance, verbose=False):
     """ Calculate new expected median price based on current price feeds
         :param Steem steemd_instance: Steem() instance to use when accesing a RPC
@@ -110,7 +114,7 @@ def estimate_median_price(steemd_instance, verbose=False):
     for w in witnesses:
         base = Amount(w['sbd_exchange_rate']['base']).amount
         quote = Amount(w['sbd_exchange_rate']['quote']).amount
-        w['price'] = base/quote
+        w['price'] = base / quote
 
     # sort witnesses by price
     sorted_w = sorted(witnesses, key=lambda k: k['price'])
@@ -122,6 +126,7 @@ def estimate_median_price(steemd_instance, verbose=False):
     # 11th element price
     return sorted_w[10]['price']
 
+
 def estimate_median_price_from_feed(steemd_instance):
     """ Calculate new expected median price based on last median price feed
         :param Steem steemd_instance: Steem() instance to use when accesing a RPC
@@ -132,8 +137,9 @@ def estimate_median_price_from_feed(steemd_instance):
     base = Amount(last_feed[0]['base'])
     quote = Amount(last_feed[0]['quote'])
 
-    median = base.amount/quote.amount
+    median = base.amount / quote.amount
     return median
+
 
 def get_market_price(steemd_instance):
     """
@@ -174,6 +180,7 @@ def convert_golos_to_gbg(steemd_instance, amount, price_source='median'):
     value = amount * price
     return value
 
+
 def convert_gbg_to_golos(steemd_instance, amount, price_source='median'):
     """ Convert GBG to GOLOS
         :param Steem steemd_instance: Steem() instance to use when accessing a RPC
@@ -190,6 +197,7 @@ def convert_gbg_to_golos(steemd_instance, amount, price_source='median'):
         return False
     value = amount / price
     return value
+
 
 def calc_payout(steemd_instance, net_rshares, curve='linear'):
     """ Calc payout in GOLOS based on net_rshares
@@ -209,7 +217,7 @@ def calc_payout(steemd_instance, net_rshares, curve='linear'):
     if curve == 'quadratic':
         # perform same calculations as golosd v0.16.4
         # c++ code: return (rshares + s) * (rshares + s) - s * s;
-        vshares = (net_rshares + CONTENT_CONSTANT) * (net_rshares + CONTENT_CONSTANT) - CONTENT_CONSTANT**2
+        vshares = (net_rshares + CONTENT_CONSTANT) * (net_rshares + CONTENT_CONSTANT) - CONTENT_CONSTANT ** 2
     elif curve == 'linear':
         vshares = net_rshares
 
@@ -218,6 +226,7 @@ def calc_payout(steemd_instance, net_rshares, curve='linear'):
     payout = vshares * total_reward_fund_steem.amount / total_reward_shares2
     log.debug('calculated post payout, GOLOS: {:.8f}'.format(payout))
     return payout
+
 
 def estimate_author_payout(steemd_instance, pending_payout_value):
     """ Estimate author payout
@@ -264,10 +273,11 @@ def get_voting_power(steemd_instance, account):
     elapsed_time = datetime.utcnow() - last_vote_time
 
     regenerated_power = STEEMIT_100_PERCENT * elapsed_time.total_seconds() / STEEMIT_VOTE_REGENERATION_SECONDS
-    current_power = vp + regenerated_power/100
+    current_power = vp + regenerated_power / 100
     if current_power > 100:
         current_power = 100
     return current_power
+
 
 def get_bandwidth(steemd_instance, account, type='market'):
     """ Estimate current account bandwidth and usage ratio
@@ -299,23 +309,27 @@ def get_bandwidth(steemd_instance, account, type='market'):
 
     max_virtual_bandwidth = int(global_props['max_virtual_bandwidth'])
     log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth:', max_virtual_bandwidth))
-    log.debug('{:.<30}{:.>30.0f}'.format('max_virtual_bandwidth, KB:', max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024))
+    log.debug(
+        '{:.<30}{:.>30.0f}'.format(
+            'max_virtual_bandwidth, KB:', max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
+        )
+    )
 
     total_vesting_shares = Amount(global_props['total_vesting_shares']).amount
     log.debug('{:.<30}{:.>30.0f}'.format('total_vesting_shares:', total_vesting_shares))
-
 
     # calculate bandwidth regeneration
     if elapsed_time > STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS:
         new_bandwidth = 0
     else:
-        new_bandwidth = (((STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS - elapsed_time) * account_average_bandwidth)
-                / STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS)
+        new_bandwidth = (
+            (STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS - elapsed_time) * account_average_bandwidth
+        ) / STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS
 
     # example code to estimate whether your new transaction will exceed bandwidth or not
-    #trx_size = 1024*2 # imagine 2 KB trx
-    #trx_bandwidth = trx_size * STEEMIT_BANDWIDTH_PRECISION
-    #account_average_bandwidth = new_bandwidth + trx_bandwidth
+    # trx_size = 1024*2 # imagine 2 KB trx
+    # trx_bandwidth = trx_size * STEEMIT_BANDWIDTH_PRECISION
+    # account_average_bandwidth = new_bandwidth + trx_bandwidth
 
     account_average_bandwidth = new_bandwidth
     log.debug('{:.<30}{:.>30.0f}'.format('account_average_bandwidth:', account_average_bandwidth))
@@ -328,34 +342,35 @@ def get_bandwidth(steemd_instance, account, type='market'):
     log.debug('{:.<30}{:.>30.0f}'.format('used:', used))
     log.debug('{:.<30}{:.>30.0f}'.format('avail:', avail))
 
-    used_ratio = used/avail
+    used_ratio = used / avail
     log.info('{:.<30}{:.>30.2%}'.format('used ratio:', used_ratio))
 
     # account bandwidth is actually a representation of sent bytes, so get these bytes
     used_kb = account_average_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
     # market ops uses x10 bandwidth
     if type == 'market':
-        used_kb = used_kb/10
+        used_kb = used_kb / 10
     log.info('{:.<30}{:.>30.2f}'.format('used KB:', used_kb))
 
     # available account bandwidth is a fraction of max_virtual_bandwidth based on his portion of total_vesting_shares
-    avail_kb = account_vshares/total_vesting_shares * max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
+    avail_kb = account_vshares / total_vesting_shares * max_virtual_bandwidth / STEEMIT_BANDWIDTH_PRECISION / 1024
     if type == 'market':
-        avail_kb = avail_kb/10
+        avail_kb = avail_kb / 10
     log.info('{:.<30}{:.>30.2f}'.format('avail KB:', avail_kb))
-
 
     if used < avail:
         log.debug('has bandwidth')
     else:
         log.debug('no bandwidth')
 
-    return used/avail * 100
+    return used / avail * 100
+
 
 def generate_password(size=53, chars=string.ascii_letters + string.digits):
     """ Generate random word with letters and digits
     """
     return ''.join(random.choice(chars) for x in range(size))
+
 
 def transfer(steemd_instance, account, to, amount, asset, memo):
     """ Transfer ASSET to someone

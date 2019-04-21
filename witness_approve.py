@@ -15,18 +15,12 @@ log = logging.getLogger('functions')
 def main():
 
     parser = argparse.ArgumentParser(
-        description='Vote for witness',
-        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues')
-    parser.add_argument(
-        '-d', '--debug', action='store_true',
-        help='enable debug output'),
-    parser.add_argument(
-        '-c', '--config', default='./common.yml',
-        help='specify custom path for config file')
-    parser.add_argument('account',
-            help='account name to use for voting'),
-    parser.add_argument(
-        'witness', help='witness name to approve')
+        description='Vote for witness', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues'
+    )
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
+    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
+    parser.add_argument('account', help='account name to use for voting'),
+    parser.add_argument('witness', help='witness name to approve')
     args = parser.parse_args()
 
     # create logger
@@ -45,6 +39,7 @@ def main():
 
     golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
     golos.approve_witness(args.witness, account=args.account)
+
 
 if __name__ == '__main__':
     main()
