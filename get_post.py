@@ -36,7 +36,7 @@ def main():
 
     # parse config
     with open(args.config, 'r') as ymlfile:
-        conf = yaml.load(ymlfile)
+        conf = yaml.safe_load(ymlfile)
 
     # extract author and post permlink from args.url
     p = re.search('@(.*?)/([^/]+)', args.url)

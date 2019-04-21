@@ -44,7 +44,7 @@ def main():
 
     # parse config
     with open(args.config, 'r') as ymlfile:
-        conf = yaml.load(ymlfile)
+        conf = yaml.safe_load(ymlfile)
 
     b = not args.broadcast
     golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])

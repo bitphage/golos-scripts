@@ -48,7 +48,7 @@ def main():
 
     # parse config
     with open(args.config, 'r') as ymlfile:
-        conf = yaml.load(ymlfile)
+        conf = yaml.safe_load(ymlfile)
 
     if args.type == 'author':
         ops = ['author_reward']

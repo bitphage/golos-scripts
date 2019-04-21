@@ -37,7 +37,7 @@ def main():
 
     # parse config
     with open(args.config, 'r') as ymlfile:
-        conf = yaml.load(ymlfile)
+        conf = yaml.safe_load(ymlfile)
 
     # initialize steem instance
     log.debug('broadcast: %s', args.broadcast)
