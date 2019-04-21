@@ -31,6 +31,8 @@ def main():
             help='specify custom path for config file')
     parser.add_argument('-n', '--notify', action='store_true',
             help='send message to accounts who uses conversions')
+    parser.add_argument('-a', '--account',
+            help='get request for single account')
     args = parser.parse_args()
 
     # create logger
@@ -49,10 +51,12 @@ def main():
 
     golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
 
-    c = golos.get_account_count()
-    log.debug('total accounts: {}'.format(c))
-
-    accs = golos.get_all_usernames()
+    if args.account:
+        accs = [args.account]
+    else:
+        c = golos.get_account_count()
+        log.debug('total accounts: {}'.format(c))
+        accs = golos.get_all_usernames()
 
     # obtain median and market prices whether we're going to send a notification
     if args.notify:
