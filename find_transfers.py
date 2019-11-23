@@ -1,19 +1,13 @@
 #!/usr/bin/env python
 
-import sys
-import json
 import argparse
 import logging
 import yaml
 
 from datetime import datetime
-from pprint import pprint
 from golos import Steem
 from golos.account import Account
 from golos.amount import Amount
-from golos.converter import Converter
-
-import functions
 
 log = logging.getLogger('functions')
 
@@ -34,7 +28,7 @@ def main():
     args = parser.parse_args()
 
     # create logger
-    if args.debug == True:
+    if args.debug is True:
         log.setLevel(logging.DEBUG)
     else:
         log.setLevel(logging.INFO)
@@ -53,7 +47,8 @@ def main():
     history = account.rawhistory(only_ops=['transfer'], limit=args.limit)
 
     for item in history:
-        #pprint(item)
+        # from pprint import pprint
+        # pprint(item)
 
         timestamp = datetime.strptime(item[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
         t_from = item[1]['op'][1]['from']
