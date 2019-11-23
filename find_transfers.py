@@ -53,15 +53,16 @@ def main():
     history = account.rawhistory(only_ops=['transfer'], limit=args.limit)
 
     for item in history:
-        # pprint(item)
+        #pprint(item)
 
         timestamp = datetime.strptime(item[1]['timestamp'], '%Y-%m-%dT%H:%M:%S')
         t_from = item[1]['op'][1]['from']
         to = item[1]['op'][1]['to']
         amount = Amount(item[1]['op'][1]['amount'])
+        memo = item[1]['op'][1]['memo']
 
         if amount.amount > args.amount:
-            print('{}: {:<16} -> {:<16}, {}'.format(timestamp, t_from, to, amount))
+            print('{}: {:<16} -> {:<16}, {}, {}'.format(timestamp, t_from, to, amount, memo))
 
 
 if __name__ == '__main__':
