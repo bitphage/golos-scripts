@@ -25,7 +25,7 @@ def main():
     args = parser.parse_args()
 
     # create logger
-    if args.debug == True:
+    if args.debug is True:
         log.setLevel(logging.DEBUG)
     else:
         log.setLevel(logging.INFO)
@@ -39,8 +39,8 @@ def main():
         conf = yaml.safe_load(ymlfile)
 
     # extract author and post permlink from args.url
-    p = re.search('@(.*?)/([^/]+)', args.url)
-    if p == None:
+    p = re.search('@(.*?)/([^/\ #$\n\']+)', args.url)  # noqa: W605
+    if p is None:
         log.critical('Wrong post id specified')
         sys.exit(1)
     else:
