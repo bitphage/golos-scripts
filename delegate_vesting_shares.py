@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-import json
 import argparse
 import logging
 import yaml
@@ -10,7 +8,6 @@ from golos import Steem
 from golos.converter import Converter
 from golos.amount import Amount
 
-import functions
 
 log = logging.getLogger('functions')
 
@@ -29,7 +26,7 @@ def main():
     args = parser.parse_args()
 
     # create logger
-    if args.debug == True:
+    if args.debug is True:
         log.setLevel(logging.DEBUG)
     else:
         log.setLevel(logging.INFO)
