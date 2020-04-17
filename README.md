@@ -32,14 +32,18 @@ Requirements
 
 * golos node 0.18+
 
-Installation using pipenv
--------------------------
+Installation via poetry
+-----------------------
 
-1. Install [pipenv](https://docs.pipenv.org/).
-2. Run the following code
+1. Install [poetry](https://python-poetry.org/docs/)
+2. Run `poetry install` to install the dependencies
+3. Copy `common.yml.example` to `common.yml` and change variables according to your needs
+4. Now you're ready to run scripts:
+
 
 ```
-pipenv install
+poetry shell
+./script.py
 ```
 
 How to use
@@ -47,16 +51,3 @@ How to use
 
 1. Prepare working environment using virtualenv (see above)
 2. Copy `common.yml.example` to `common.yml` and change variables according to your needs
-3. Run the scripts:
-
-```
-pipenv shell
-./script.py
-exit
-```
-
-or
-
-```
-pipenv run ./script.py
-```

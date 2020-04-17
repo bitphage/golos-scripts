@@ -11,6 +11,7 @@ repository = "https://github.com/bitfag/golos-scripts"
 python = "^3.6.1"
 click = "^7.1.1"
 python-golos = "^1.0.0"
+bitsharesscripts = "^2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.2.0"
