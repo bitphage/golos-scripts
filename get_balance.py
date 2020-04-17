@@ -14,7 +14,7 @@ from golosscripts.decorators import common_options, helper
 def main(ctx, account):
     """Show account balances."""
 
-    account = Account(account, steemd_instance=ctx.helper)
+    account = Account(account)
     balance = account.get_balances()
     gp = ctx.helper.converter.vests_to_sp(balance['total']['GESTS'])
 
