@@ -1,0 +1,19 @@
+{
+    "template": "https://github.com/bitfag/cookiecutter-base-py-project",
+    "commit": "06bb2cdb5930e44d9adfa00992224e3e5b4f3ca1",
+    "context": {
+        "cookiecutter": {
+            "project_name": "golos-scripts",
+            "package_name": "golosscripts",
+            "version": "1.0.0",
+            "description": "Scripts for Golos",
+            "email": "vvk@vvk.pp.ru",
+            "full_name": "vvk",
+            "author": "bitfag",
+            "license": "MIT",
+            "url": "https://github.com/bitfag/golos-scripts",
+            "line_width": "120",
+            "_template": "https://github.com/bitfag/cookiecutter-base-py-project"
+        }
+    }
+}
