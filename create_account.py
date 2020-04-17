@@ -1,55 +1,44 @@
 #!/usr/bin/env python
 
 import sys
-import json
-import argparse
-import logging
-import yaml
-from golos import Steem
-from golosbase.account import PasswordKey, PublicKey, PrivateKey
 
-import functions
+import click
+from bitsharesscripts.functions import generate_password, get_keys_from_password
 
-log = logging.getLogger('functions')
+from golosscripts.decorators import common_options, helper
 
 
-def main():
+@click.command()
+@common_options
+@helper
+@click.option('-p', '--password', help='manually specify a password (if not, a random will be generated)')
+@click.option('--broadcast', default=False, is_flag=True, help='broadcast transaction')
+@click.argument('creator')
+@click.argument('account')
+@click.pass_context
+def main(ctx, broadcast, password, creator, account):
+    """
+    Create new account.
 
-    parser = argparse.ArgumentParser(
-        description='Create account', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues'
-    )
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output')
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument('-p', '--password', help='manually specify a password')
-    parser.add_argument('creator', help='parent account who will create child account')
-    parser.add_argument('account', help='new account name')
-    args = parser.parse_args()
+    CREATOR is parent account who will create child account
 
-    # create logger
-    if args.debug == True:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
+    ACCOUNT is new account name
+    """
 
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
-
-    # random password
-    if args.password:
-        password = args.password
-    else:
-        password = functions.generate_password()
+    if not password:
+        password = generate_password()
 
     print('password: {}\n'.format(password))
+    # prints keys to stdout
+    prefix = ctx.helper.steemd.chain_params["prefix"]
+    key_types = ['owner', 'active', 'posting', 'memo']
+    get_keys_from_password(account, password, prefix, key_types=key_types)
 
-    golos.create_account(args.account, creator=args.creator, password=password)
+    if not broadcast:
+        ctx.log.info('Not broadcasting!')
+        sys.exit(0)
+
+    ctx.helper.create_account(account, creator=creator, password=password)
 
 
 if __name__ == '__main__':
