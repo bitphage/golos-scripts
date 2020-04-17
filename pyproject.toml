@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "golosscripts"
-version = "1.0.0"
+version = "0.1.0"
 description = "Scripts for Golos blockchain"
 authors = ["Vladimir Kamarzin <vvk@vvk.pp.ru>"]
 license = "MIT"
