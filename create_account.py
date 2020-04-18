@@ -6,6 +6,7 @@ import click
 from bitsharesscripts.functions import generate_password, get_keys_from_password
 
 from golosscripts.decorators import common_options, helper
+from golosscripts.helper import key_types
 
 
 @click.command()
@@ -31,7 +32,6 @@ def main(ctx, broadcast, password, creator, account):
     print('password: {}\n'.format(password))
     # prints keys to stdout
     prefix = ctx.helper.steemd.chain_params["prefix"]
-    key_types = ['owner', 'active', 'posting', 'memo']
     get_keys_from_password(account, password, prefix, key_types=key_types)
 
     if not broadcast:
