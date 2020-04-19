@@ -3,6 +3,7 @@ golos-scripts
 
 This is a python scripts collection for golos blockchain network.
 
+* `donation.py` - make a donation for post
 * `change_password.py` - change all account keys using random generated password or user-provided
 * `generate_keypair.py` - just generate private and public keypair
 * `transfer.py` - transfer some money to another account
