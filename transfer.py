@@ -1,55 +1,32 @@
 #!/usr/bin/env python
 
 import sys
-import json
-import argparse
-import logging
-import yaml
-import traceback
-from golos import Steem
 
-import functions
+import click
 
-log = logging.getLogger('functions')
+from golosscripts.decorators import common_options, helper
 
 
-def main():
+@click.command()
+@common_options
+@helper
+@click.option('--broadcast', default=False, is_flag=True, help='broadcast transaction')
+@click.argument('from_')
+@click.argument('to')
+@click.argument('amount', type=float)
+@click.argument('asset')
+@click.argument('memo')
+@click.pass_context
+def main(ctx, broadcast, from_, to, amount, asset, memo):
+    """Transfer asset FROM account to another account TO."""
 
-    parser = argparse.ArgumentParser(
-        description='transfer', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues'
-    )
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
-    parser.add_argument('--broadcast', action='store_true', default=False, help='broadcast transactions'),
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument('f', help='from'),
-    parser.add_argument('to', help='to'),
-    parser.add_argument('amount', help='amount'),
-    parser.add_argument('asset', help='asset'),
-    parser.add_argument('memo', help='memo'),
+    ctx.log.info('transfer {} -> {}: {} {} "{}"'.format(from_, to, amount, asset, memo))
 
-    args = parser.parse_args()
+    if not broadcast:
+        ctx.log.info('Not broadcasting!')
+        sys.exit(0)
 
-    # create logger
-    if args.debug == True:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    # initialize steem instance
-    log.debug('broadcast: %s', args.broadcast)
-    # toggle args.broadcast
-    b = not args.broadcast
-    golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])
-
-    functions.transfer(golos, args.f, args.to, args.amount, args.asset, args.memo)
+    ctx.helper.transfer(to, amount, asset, memo=memo, account=from_)
 
 
 if __name__ == '__main__':
