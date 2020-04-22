@@ -15,6 +15,8 @@ from golos.witness import Witness
 
 STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60 * 60 * 24 * 7  # 7 days
 STEEMIT_BANDWIDTH_PRECISION = 1000000
+STEEMIT_100_PERCENT = 10000
+STEEMIT_VOTE_REGENERATION_SECONDS = 5 * 60 * 60 * 24  # 5 days
 
 key_types = ['owner', 'active', 'posting', 'memo']
 post_entry = namedtuple('post', ['author', 'permlink', 'id'])
@@ -197,3 +199,22 @@ class Helper(Steem):
         price = base / quote
 
         return price
+
+    def get_voting_power(self, account: str) -> float:
+        """
+        Calculate real voting power instead of stale info in get_account()
+
+        :param str account: account name
+        :return: voting power 0-100
+        """
+
+        acc = Account(account)
+        vp = acc.voting_power()
+
+        last_vote_time = parse_time(acc['last_vote_time'])
+        elapsed_time = datetime.utcnow() - last_vote_time
+
+        regenerated_power = STEEMIT_100_PERCENT * elapsed_time.total_seconds() / STEEMIT_VOTE_REGENERATION_SECONDS
+        current_power = min(vp + regenerated_power / 100, 100)
+
+        return current_power
