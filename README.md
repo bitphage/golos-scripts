@@ -19,6 +19,7 @@ This is a python scripts collection for golos blockchain network.
 * `get_vesting_withdraws.py` - find all vesting withdrawals with rates and dates
 * `get_conversion_requests.py` - find all GBG conversion requests
 * `post.py` - publish post to the blockchain
+* `sea_biom.py` - print Golos Power for each sea habitant level
 * `create_account.py` - create child account
 * `find_transfers.py` - scan account history to find transfers
 * `find_rewards.py` - scan account history to find author or curation rewards
