@@ -152,10 +152,8 @@ class Helper(Steem):
 
         return price
 
-    def get_conversion_price(self) -> float:
-        """Get current conversion GBG/GOLOS price."""
-
-        median_price = self.converter.sbd_median_price()
+    def get_min_price(self) -> float:
+        """Get GBG/GOLOS minimal price (limit by chain)."""
 
         props = self.get_dynamic_global_properties()
         sbd_supply = Amount(props['current_sbd_supply'])
@@ -165,6 +163,4 @@ class Helper(Steem):
         # this min_price caps system debt to 10% of GOLOS market capitalisation
         min_price = 9 * sbd_supply.amount / current_supply.amount
 
-        price = max(median_price, min_price)
-
-        return price
+        return min_price
