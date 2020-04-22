@@ -14,7 +14,7 @@ STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60 * 60 * 24 * 7  # 7 days
 STEEMIT_BANDWIDTH_PRECISION = 1000000
 
 key_types = ['owner', 'active', 'posting', 'memo']
-post_entry = namedtuple('post', ['author', 'permlink'])
+post_entry = namedtuple('post', ['author', 'permlink', 'id'])
 bandwidth = namedtuple('bandwidth', ['used', 'avail', 'ratio'])
 
 log = logging.getLogger(__name__)
@@ -38,7 +38,9 @@ class Helper(Steem):
             author = result.group(1)
             permlink = result.group(2)
 
-        return post_entry(author, permlink)
+        post_id = '@{}/{}'.format(author, permlink)
+
+        return post_entry(author, permlink, post_id)
 
     def get_bandwidth(self, account: str, type_: str = 'market') -> bandwidth:
         """
