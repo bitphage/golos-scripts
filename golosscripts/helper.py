@@ -49,7 +49,7 @@ class Helper(Steem):
         Estimate current account bandwidth and usage ratio.
 
         :param str account: account name
-        :param str type: 'market' used for transfer operations, forum - for posting and voting,
+        :param str type_: 'market' used for transfer operations, forum - for posting and voting,
             custom - custom ops
         """
 
