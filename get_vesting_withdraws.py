@@ -1,85 +1,55 @@
 #!/usr/bin/env python
 
-import sys
-import json
-import argparse
-import logging
-import yaml
-from golos import Steem
-from golos.account import Account
-from golos.amount import Amount
-from golos.converter import Converter
-from pprint import pprint
-
-from datetime import timedelta
 from datetime import datetime
 
-import functions
+import click
+from golos.amount import Amount
+from golos.utils import parse_time
 
-log = logging.getLogger('functions')
+from golosscripts.decorators import common_options, helper
 
 
-def main():
+@click.command()
+@common_options
+@helper
+@click.option(
+    '-m',
+    '--min-mgests',
+    default=0,
+    type=float,
+    help='look for account with vesting shares not less than X MGESTS, default is 0',
+)
+@click.option('-a', '--account', type=str, help='get info for this single account')
+@click.pass_context
+def main(ctx, min_mgests, account):
+    """Find all vesting withdrawals with rates and dates."""
 
-    parser = argparse.ArgumentParser(
-        description='Find all vesting withdrawals with rates and dates',
-        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
-    )
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument(
-        '-m',
-        '--min-mgests',
-        default=0,
-        type=float,
-        help='look for account with vesting shares not less than X MGESTS, default is 0',
-    )
-    parser.add_argument('-a', '--account', help='get info for single account')
-    args = parser.parse_args()
+    ctx.log.debug('total accounts: %s', ctx.helper.get_account_count())
 
-    # create logger
-    if args.debug == True:
-        log.setLevel(logging.DEBUG)
+    if account:
+        accs = [account]
     else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
-
-    c = golos.get_account_count()
-    log.debug('total accounts: {}'.format(c))
-
-    if args.account:
-        accs = [args.account]
-    else:
-        accs = golos.get_all_usernames()
+        accs = ctx.helper.get_all_usernames()
 
     start = datetime.utcnow()
 
     # get all accounts in one batch
-    all_accounts = golos.get_accounts(accs)
+    all_accounts = ctx.helper.get_accounts(accs)
 
     # we well get summary info about total withdrawal rate and number of accounts
     sum_rate = float()
     count = int()
 
-    cv = Converter(golos)
+    cv = ctx.helper.converter
     steem_per_mvests = cv.steem_per_mvests()
 
-    for a in all_accounts:
-        vshares = Amount(a['vesting_shares'])
+    for acc in all_accounts:
+        vshares = Amount(acc['vesting_shares'])
         mgests = vshares.amount / 1000000
-        rate = Amount(a['vesting_withdraw_rate'])
-        d = datetime.strptime(a['next_vesting_withdrawal'], '%Y-%m-%dT%H:%M:%S')
+        rate = Amount(acc['vesting_withdraw_rate'])
+        date = parse_time(acc['next_vesting_withdrawal'])
 
-        if mgests > args.min_mgests and rate.amount > 1000:
+        if mgests > min_mgests and rate.amount > 1000:
             # We use own calculation instead of cv.vests_to_sp() to speed up execution
             # avoiding API call on each interation
             rate_gp = rate.amount / 1e6 * steem_per_mvests
@@ -87,18 +57,12 @@ def main():
             sum_rate += rate_gp
             count += 1
 
-            print('{:<16} {:<18} {:>6.0f} {:>8.0f}'.format(a['name'], d.strftime('%Y-%m-%d %H:%M'), rate_gp, gp))
+            print('{:<16} {:<18} {:>6.0f} {:>8.0f}'.format(acc['name'], date.strftime('%Y-%m-%d %H:%M'), rate_gp, gp))
 
-    # non-pretty format
-    #            log.info('{} {} {:.0f} / {:.0f}'.format(
-    #                                       a['name'],
-    #                                       d.strftime('%Y-%m-%d %H:%M'),
-    #                                       rate_gp, gp))
+    ctx.log.debug('accounts iteration took {:.2f} seconds'.format((datetime.utcnow() - start).total_seconds()))
 
-    log.debug('accounts iteration took {:.2f} seconds'.format((datetime.utcnow() - start).total_seconds()))
-
-    log.info('numbers of matching accounts on vesting withdrawal: {}'.format(count))
-    log.info('sum rate: {:.0f}'.format(sum_rate))
+    ctx.log.info('numbers of matching accounts on vesting withdrawal: {}'.format(count))
+    ctx.log.info('sum rate: {:.0f}'.format(sum_rate))
 
 
 if __name__ == '__main__':
