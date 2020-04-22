@@ -1,53 +1,30 @@
 #!/usr/bin/env python
 
-import sys
-import json
-import argparse
-import logging
-import yaml
-from golos import Steem
+import click
 
-import functions
-
-log = logging.getLogger('functions')
+from golosscripts.decorators import common_options, helper
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='publish post to the blockchain',
-        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
-    )
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument('account', help='account to post from')
-    parser.add_argument('title', help='post title')
-    parser.add_argument('tags', help='specify a comma-separated tag list')
-    parser.add_argument('permlink', help='specify post permlink')
-    parser.add_argument('file', help='path to file containing post in markdown format')
-    args = parser.parse_args()
+@click.command()
+@common_options
+@helper
+@click.argument('account', type=str)
+@click.argument('title', type=str)
+@click.argument('tags', type=str)
+@click.argument('permlink', type=str)
+@click.argument('file_', type=click.File())
+@click.pass_context
+def main(ctx, account, title, tags, permlink, file_):
+    """
+    Publish post to the Blockchain.
 
-    # create logger
-    if args.debug == True:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
+    \b ACCOUNT account to post from TITLE post title TAGS comma-separated tag list PERMLINK post permlink FILE path to
+    file containing post in markdown format or "-" for stdin
+    """
+    body = file_.read()
+    tags = tags.split(',')
 
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
-
-    with open(args.file, 'r') as f:
-        body = f.read()
-
-    tags = args.tags.split(',')
-
-    golos.post(args.title, body, author=args.account, permlink=args.permlink, tags=tags)
+    ctx.helper.post(title, body, author=account, permlink=permlink, tags=tags)
 
 
 if __name__ == '__main__':
