@@ -21,6 +21,7 @@ def common_options(func):
 
         # create logger
         debug = kwargs.pop("debug")
+        ctx.debug = debug
         if debug is True:
             log.setLevel(logging.DEBUG)
         else:
