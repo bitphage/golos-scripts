@@ -28,7 +28,7 @@ def main(ctx, notify, account):
     # obtain conversion_price and market prices whether we're going to send a notification
     if notify:
         bid = ctx.helper.get_market_price(type_='bid')
-        conversion_price = ctx.helper.get_conversion_price()
+        conversion_price = ctx.helper.converter.sbd_median_price()
         if not bid or not conversion_price:
             ctx.log.critical('failed to obtain price')
             sys.exit(1)
