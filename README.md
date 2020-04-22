@@ -10,7 +10,6 @@ This is a python scripts collection for golos blockchain network.
 * `transfer_to_vesting.py` - transfer GOLOS to vesting balance (Golos Power)
 * `get_balance.py` - display account balances
 * `get_balance_multi.py` - display balances of multiple accounts
-* `estimate_upvote.py` - estimate author payout simulating someone's upvote
 * `estimate_curator_rewards.py` - estimate real curators rewards
 * `estimate_median_price.py` - look up current witnesses price feeds and calculate new expected median price
 * `get_post.py` - get and print post/comment
