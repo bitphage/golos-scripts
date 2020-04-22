@@ -1,64 +1,32 @@
 #!/usr/bin/env python
 
-import argparse
-import yaml
-import re
-import logging
 import sys
-
-from golos import Steem
 from pprint import pprint
 
-import functions
+import click
 
-log = logging.getLogger(__name__)
+from golosscripts.decorators import common_options, helper
 
 
-def main():
+@click.command()
+@common_options
+@helper
+@click.option('--tags-only', default=False, is_flag=True, help='show only post tags')
+@click.option('--body-only', default=False, is_flag=True, help='show only body')
+@click.argument('url')
+@click.pass_context
+def main(ctx, tags_only, body_only, url):
+    """Get comment object."""
 
-    parser = argparse.ArgumentParser(description='get post with metadata', epilog='Report bugs to: ')
-    parser.add_argument('--tags-only', action='store_true', help='show only post tags')
-    parser.add_argument('--body', action='store_true', help='show only body')
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
-    parser.add_argument('url', help='post id in format @author/article or full url')
-    args = parser.parse_args()
-
-    # create logger
-    if args.debug is True:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    # extract author and post permlink from args.url
-    p = re.search('@(.*?)/([^/\ #$\n\']+)', args.url)  # noqa: W605
-    if p is None:
-        log.critical('Wrong post id specified')
-        sys.exit(1)
-    else:
-        author = p.group(1)
-        log.debug('author: {}'.format(author))
-
-        post_permlink = p.group(2)
-        log.debug('permlink: {}'.format(post_permlink))
-
-    golos = Steem(nodes=conf['nodes_old'])
-    post = functions.get_post_content(golos, author, post_permlink)
+    post = ctx.helper.parse_url(url)
+    post = ctx.helper.get_post(post.id)
 
     if not post:
         sys.exit(1)
 
-    if args.tags_only:
+    if tags_only:
         pprint(post['tags'])
-    elif args.body:
+    elif body_only:
         print(post['body'])
     else:
         pprint(dict(post))
