@@ -1,28 +1,22 @@
 #!/usr/bin/env python
 
-import argparse
-import yaml
-from golos import Steem
-from golos.block import Block
 from pprint import pprint
 
+import click
+from golos.block import Block
 
-def main():
+from golosscripts.decorators import common_options, helper
 
-    parser = argparse.ArgumentParser(
-        description='', epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
-    )
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument('block', help='block')
-    args = parser.parse_args()
 
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
+@click.command()
+@common_options
+@helper
+@click.argument('block_num')
+@click.pass_context
+def main(ctx, block_num):
+    """Get block."""
 
-    golos = Steem(nodes=conf['nodes_old'], keys=conf['keys'])
-
-    block = Block(args.block, steemd_instance=golos)
+    block = Block(block_num)
     pprint(block)
 
 
