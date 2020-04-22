@@ -6,7 +6,7 @@ import yaml
 
 from .helper import Helper
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('golosscripts')
 
 
 def common_options(func):
