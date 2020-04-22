@@ -7,6 +7,7 @@ from golos import Steem
 from golos.account import Account
 from golos.amount import Amount
 from golos.converter import Converter
+from golos.dex import Dex
 from golos.instance import set_shared_steemd_instance
 from golos.utils import parse_time
 
@@ -27,6 +28,7 @@ class Helper(Steem):
         set_shared_steemd_instance(self)
 
         self.converter = Converter()
+        self.dex = Dex()
 
     @staticmethod
     def parse_url(url: str) -> post_entry:
@@ -133,3 +135,36 @@ class Helper(Steem):
             log.debug('no bandwidth')
 
         return bandwidth(used_kb, avail_kb, used_ratio)
+
+    def get_market_price(self, type_: str = 'bid') -> float:
+        """
+        Get current market price GBG/GOLOS.
+
+        :param str type_: bid or ask
+        :return: price as float
+        """
+
+        ticker = self.dex.get_ticker()
+        if type_ == 'bid':
+            price = ticker['highest_bid']
+        elif type_ == 'ask':
+            price = ticker['lowest_ask']
+
+        return price
+
+    def get_conversion_price(self) -> float:
+        """Get current conversion GBG/GOLOS price."""
+
+        median_price = self.converter.sbd_median_price()
+
+        props = self.get_dynamic_global_properties()
+        sbd_supply = Amount(props['current_sbd_supply'])
+        current_supply = Amount(props['current_supply'])
+
+        # libraries/chain/database.cpp
+        # this min_price caps system debt to 10% of GOLOS market capitalisation
+        min_price = 9 * sbd_supply.amount / current_supply.amount
+
+        price = max(median_price, min_price)
+
+        return price
