@@ -2,6 +2,7 @@ import logging
 import re
 from collections import namedtuple
 from datetime import datetime
+from typing import List
 
 from golos import Steem
 from golos.account import Account
@@ -10,6 +11,7 @@ from golos.converter import Converter
 from golos.dex import Dex
 from golos.instance import set_shared_steemd_instance
 from golos.utils import parse_time
+from golos.witness import Witness
 
 STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60 * 60 * 24 * 7  # 7 days
 STEEMIT_BANDWIDTH_PRECISION = 1000000
@@ -17,6 +19,7 @@ STEEMIT_BANDWIDTH_PRECISION = 1000000
 key_types = ['owner', 'active', 'posting', 'memo']
 post_entry = namedtuple('post', ['author', 'permlink', 'id'])
 bandwidth = namedtuple('bandwidth', ['used', 'avail', 'ratio'])
+feed = namedtuple('feed', ['owner', 'price'])
 
 log = logging.getLogger(__name__)
 
@@ -164,3 +167,33 @@ class Helper(Steem):
         min_price = 9 * sbd_supply.amount / current_supply.amount
 
         return min_price
+
+    def get_price_feeds(self) -> List[feed]:
+        """Get current price feeds."""
+        witnesses = self.get_active_witnesses()
+        witnesses = [Witness(i) for i in witnesses]
+
+        # add price key
+        for i in witnesses:
+            base = Amount(i['sbd_exchange_rate']['base']).amount
+            quote = Amount(i['sbd_exchange_rate']['quote']).amount
+            try:
+                i['price'] = base / quote
+            except ZeroDivisionError:
+                pass
+
+        feeds = [feed(i['owner'], i['price']) for i in witnesses if 'price' in i]
+        feeds = sorted(feeds, key=lambda k: k.price)
+
+        return feeds
+
+    def estimate_median_price(self) -> float:
+        """Calculate new expected median price based on last median price feed."""
+
+        last_feed = self.get_feed_history()['price_history'][-1]
+
+        base = Amount(last_feed['base']).amount
+        quote = Amount(last_feed['quote']).amount
+        price = base / quote
+
+        return price
