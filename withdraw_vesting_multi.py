@@ -1,74 +1,43 @@
 #!/usr/bin/env python
 
-import sys
-import json
-import argparse
-import logging
-import yaml
-import traceback
-from golos import Steem
+import click
 from golos.account import Account
-from golos.converter import Converter
 
-log = logging.getLogger(__name__)
+from golosscripts.decorators import common_options, helper
 
 
-def main():
+@click.command()
+@common_options
+@helper
+@click.option(
+    '-m',
+    '--min-balance',
+    default=5,
+    type=float,
+    help='minimal Golos Power balance to keep on withdrawing account (default: 5)',
+)
+@click.argument('to')
+@click.pass_context
+def main(ctx, min_balance, to):
+    """Withdraw from vesting balance of multiple accounts to specified account."""
 
-    parser = argparse.ArgumentParser(
-        description='withdraw from vesting balance of multiple accounts to specified account',
-        epilog='Report bugs to: https://github.com/bitfag/golos-scripts/issues',
-    )
-    parser.add_argument('-d', '--debug', action='store_true', help='enable debug output'),
-    parser.add_argument('--broadcast', action='store_true', default=False, help='broadcast transactions'),
-    parser.add_argument('-c', '--config', default='./common.yml', help='specify custom path for config file')
-    parser.add_argument(
-        '-m',
-        '--min-balance',
-        default=5,
-        type=float,
-        help='minimal Golos Power balance which will be left on withdrawing account',
-    )
-    parser.add_argument('to', help='to'),
-    args = parser.parse_args()
+    cv = ctx.helper.converter
+    min_balance = cv.sp_to_vests(min_balance)
 
-    # CREATE logger
-    if args.debug == True:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
+    for account in ctx.config['accs']:
 
-    # parse config
-    with open(args.config, 'r') as ymlfile:
-        conf = yaml.safe_load(ymlfile)
-
-    # initialize steem instance
-    log.debug('broadcast: %s', args.broadcast)
-    # toggle args.broadcast
-    b = not args.broadcast
-    golos = Steem(nodes=conf['nodes_old'], no_broadcast=b, keys=conf['keys'])
-
-    cv = Converter(golos)
-    min_balance = cv.sp_to_vests(args.min_balance)
-
-    for account in conf['accs']:
-
-        a = Account(account, steemd_instance=golos)
-        b = a.get_balances()
-        vests = b['available']['GESTS']
+        acc = Account(account)
+        balance = acc.get_balances()
+        vests = balance['available']['GESTS']
         withdraw_amount = vests - min_balance
 
-        log.info(
+        ctx.log.info(
             'withdrawing {:.4f} MGESTS ({:.3f} GOLOS): {} -> {}'.format(
-                withdraw_amount / 1000000, cv.vests_to_sp(withdraw_amount), account, args.to
+                withdraw_amount / 1000000, cv.vests_to_sp(withdraw_amount), account, to
             )
         )
-        golos.set_withdraw_vesting_route(args.to, percentage=100, account=account, auto_vest=False)
-        golos.withdraw_vesting(withdraw_amount, account=account)
+        ctx.helper.set_withdraw_vesting_route(to, percentage=100, account=account, auto_vest=False)
+        ctx.helper.withdraw_vesting(withdraw_amount, account=account)
 
 
 if __name__ == '__main__':
