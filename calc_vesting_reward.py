@@ -19,7 +19,13 @@ def main(ctx, account):
     balance = acc.get_balances()
     account_vesting = balance['total']['GESTS']
     vesting_fund = Amount(props['total_vesting_shares'])
-    ctx.log.info('%s vesting share: %s', account, account_vesting / vesting_fund.amount)
+
+    daily_emission = ctx.helper.calc_inflation()
+    vesting_share = account_vesting / vesting_fund.amount
+    ctx.log.info(f'{account} vesting share: {vesting_share:.4%}')
+
+    daily_account_vesting = vesting_share * daily_emission.vesting
+    ctx.log.info(f'{account} daily vesting: {daily_account_vesting:.0f}')
 
 
 if __name__ == '__main__':
