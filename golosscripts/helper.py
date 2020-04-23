@@ -32,7 +32,20 @@ key_types = ['owner', 'active', 'posting', 'memo']
 post_entry = namedtuple('post', ['author', 'permlink', 'id'])
 bandwidth = namedtuple('bandwidth', ['used', 'avail', 'ratio'])
 feed = namedtuple('feed', ['owner', 'price'])
-emission = namedtuple('emission', ['worker', 'witness', 'vesting', 'content', 'total'])
+emission = namedtuple(
+    'emission',
+    [
+        'worker',
+        'witness',
+        'vesting',
+        'content',
+        'top19',
+        'timeshare',
+        'virtual_supply',
+        'current_inflation_rate',
+        'total',
+    ],
+)
 
 log = logging.getLogger(__name__)
 
@@ -273,6 +286,7 @@ class Helper(Steem):
             _virtual_supply = virtual_supply
         else:
             _virtual_supply = Amount(props['virtual_supply']).amount
+            log.debug('current virtual_supply: {:,.0f}'.format(_virtual_supply))
 
         if worker_percent is not None and witness_percent is not None and vesting_percent is not None:
             _worker_percent = worker_percent
@@ -351,6 +365,10 @@ class Helper(Steem):
             witness_reward_per_period,
             vesting_reward_per_period,
             content_reward_per_period,
+            top19_reward_per_period,
+            timeshare_reward_per_period,
+            _virtual_supply,
+            current_inflation_rate / STEEMIT_100_PERCENT,
             total,
         )
         return data
