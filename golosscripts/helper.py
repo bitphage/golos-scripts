@@ -1,8 +1,8 @@
 import logging
 import re
 from collections import namedtuple
-from datetime import datetime
-from typing import List
+from datetime import datetime, timedelta
+from typing import List, Optional
 
 from golos import Steem
 from golos.account import Account
@@ -17,11 +17,22 @@ STEEMIT_BANDWIDTH_AVERAGE_WINDOW_SECONDS = 60 * 60 * 24 * 7  # 7 days
 STEEMIT_BANDWIDTH_PRECISION = 1000000
 STEEMIT_100_PERCENT = 10000
 STEEMIT_VOTE_REGENERATION_SECONDS = 5 * 60 * 60 * 24  # 5 days
+STEEMIT_INFLATION_RATE_START_PERCENT = 1515
+STEEMIT_INFLATION_RATE_STOP_PERCENT = 95
+STEEMIT_INFLATION_NARROWING_PERIOD = 250000
+STEEMIT_BLOCK_INTERVAL = 3
+STEEMIT_BLOCKS_PER_YEAR = 365 * 24 * 60 * 60 / STEEMIT_BLOCK_INTERVAL
+STEEMIT_BLOCKS_PER_DAY = 24 * 60 * 60 / STEEMIT_BLOCK_INTERVAL
+STEEMIT_MAX_WITNESSES = 21
+timeshare_weight = 5
+top19_weight = 1
+witness_pay_normalization_factor = 25
 
 key_types = ['owner', 'active', 'posting', 'memo']
 post_entry = namedtuple('post', ['author', 'permlink', 'id'])
 bandwidth = namedtuple('bandwidth', ['used', 'avail', 'ratio'])
 feed = namedtuple('feed', ['owner', 'price'])
+emission = namedtuple('emission', ['worker', 'witness', 'vesting', 'content', 'total'])
 
 log = logging.getLogger(__name__)
 
@@ -218,3 +229,128 @@ class Helper(Steem):
         current_power = min(vp + regenerated_power / 100, 100)
 
         return current_power
+
+    def calc_inflation(
+        self,
+        start_block_num: Optional[int] = None,
+        stop_block_num: Optional[int] = None,
+        virtual_supply: Optional[float] = None,
+        worker_percent: Optional[int] = None,
+        witness_percent: Optional[int] = None,
+        vesting_percent: Optional[int] = None,
+        precise_rewards: bool = False,
+    ) -> emission:
+        """
+        Calculate inflation in range from start block to stop block.
+
+        :param int start_block_num: start block
+        :param int stop_block_num: stop block
+        :param float virtual_supply: initial virtual_supply
+        :param int worker_percent: worker fund inflation percent (0-10000)
+        :param int witness_percent: witness pay inflation percent (0-10000)
+        :param int vesting_percent: vesting inflation percent (0-10000)
+        :param bool precise_rewards: calculate precise witness reward; precise but slow;
+            Gives a little better results (difference is very low)
+        :return: new emission detailed data for requested period
+        """
+        props = self.get_dynamic_global_properties()
+
+        if start_block_num is not None:
+            start = start_block_num
+        else:
+            start = props['head_block_number']
+
+        if stop_block_num is not None:
+            stop = stop_block_num
+        else:
+            days = 1
+            delta = timedelta(days=days)
+            stop = start + int(delta.total_seconds() / STEEMIT_BLOCK_INTERVAL)
+
+        log.debug(f'calculating inflation from block {start} to {stop}')
+
+        if virtual_supply is not None:
+            _virtual_supply = virtual_supply
+        else:
+            _virtual_supply = Amount(props['virtual_supply']).amount
+
+        if worker_percent is not None and witness_percent is not None and vesting_percent is not None:
+            _worker_percent = worker_percent
+            _witness_percent = witness_percent
+            _vesting_percent = vesting_percent
+        else:
+            log.debug('Using inflation distribution percents from median props')
+            # get inflation params
+            median_props = self.get_chain_properties()
+            _worker_percent = median_props['worker_reward_percent']
+            _witness_percent = median_props['witness_reward_percent']
+            _vesting_percent = median_props['vesting_reward_percent']
+
+        worker_reward_per_period = float()
+        vesting_reward_per_period = float()
+        witness_reward_per_period = float()
+        content_reward_per_period = float()
+        top19_reward_per_period = float()
+        timeshare_reward_per_period = float()
+        new_steem_total = float()
+
+        start_inflation_rate = STEEMIT_INFLATION_RATE_START_PERCENT
+        inflation_rate_floor = STEEMIT_INFLATION_RATE_STOP_PERCENT
+
+        while start < stop:
+            inflation_rate_adjustment = start / STEEMIT_INFLATION_NARROWING_PERIOD
+            current_inflation_rate = max(start_inflation_rate - inflation_rate_adjustment, inflation_rate_floor)
+            new_steem = _virtual_supply * current_inflation_rate / (STEEMIT_100_PERCENT * STEEMIT_BLOCKS_PER_YEAR)
+
+            if precise_rewards:
+
+                worker_reward = new_steem * _worker_percent / STEEMIT_100_PERCENT
+                witness_reward = new_steem * _witness_percent / STEEMIT_100_PERCENT
+                vesting_reward = new_steem * _vesting_percent / STEEMIT_100_PERCENT
+                content_reward = new_steem - worker_reward - witness_reward - vesting_reward
+
+                witness_reward = witness_reward * STEEMIT_MAX_WITNESSES
+                if start % 21 == 0:
+                    witness_reward = witness_reward * timeshare_weight
+                    witness_reward = witness_reward / witness_pay_normalization_factor
+                    timeshare_reward_per_period += witness_reward
+                else:
+                    witness_reward = witness_reward * top19_weight
+                    witness_reward = witness_reward / witness_pay_normalization_factor
+                    top19_reward_per_period += witness_reward
+
+                new_steem = content_reward + vesting_reward + witness_reward
+
+                worker_reward_per_period += worker_reward
+                content_reward_per_period += content_reward
+                vesting_reward_per_period += vesting_reward
+                witness_reward_per_period += witness_reward
+
+            _virtual_supply += new_steem
+            new_steem_total += new_steem
+            start += 1
+
+        if precise_rewards:
+            total = (
+                content_reward_per_period
+                + vesting_reward_per_period
+                + witness_reward_per_period
+                + content_reward_per_period
+            )
+        else:
+            worker_reward_per_period = new_steem_total * _worker_percent / STEEMIT_100_PERCENT
+            witness_reward_per_period = new_steem_total * _witness_percent / STEEMIT_100_PERCENT
+            vesting_reward_per_period = new_steem_total * _vesting_percent / STEEMIT_100_PERCENT
+            content_reward = (
+                new_steem_total - worker_reward_per_period - witness_reward_per_period - vesting_reward_per_period
+            )
+            total = new_steem_total
+
+        data = emission(
+            worker_reward_per_period,
+            witness_reward_per_period,
+            vesting_reward_per_period,
+            content_reward_per_period,
+            total,
+        )
+        return data
