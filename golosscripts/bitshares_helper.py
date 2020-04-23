@@ -19,7 +19,7 @@ class BitSharesHelper:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         if not depth_pct > 0:
-            raise Exception('depth_pct should be greater than 0')
+            raise ValueError('depth_pct should be greater than 0')
 
         market = self._get_market(market)
 
@@ -53,7 +53,7 @@ class BitSharesHelper:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         if not depth_pct > 0:
-            raise Exception('depth_pct should be greater than 0')
+            raise ValueError('depth_pct should be greater than 0')
 
         market = self._get_market(market)
 
@@ -92,7 +92,7 @@ class BitSharesHelper:
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
-            raise Exception("quote_amount or base_amount must be given")
+            raise ValueError("quote_amount or base_amount must be given")
 
         # Like get_market_sell_price(), but defaulting to base_amount if both base and quote are specified.
         asset_amount = base_amount
@@ -157,7 +157,7 @@ class BitSharesHelper:
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
-            raise Exception("quote_amount or base_amount must be given")
+            raise ValueError("quote_amount or base_amount must be given")
 
         asset_amount = quote_amount
         """ Since the purpose is never get both quote and base amounts, favor quote amount if both given because
@@ -229,7 +229,7 @@ class BitSharesHelper:
                 market, quote_amount=quote_amount, base_amount=base_amount
             )
         elif depth_pct and (base_amount or quote_amount):
-            raise Exception('depth_pct and (base_amount, quote_amount) are mutually exclusive')
+            raise ValueError('depth_pct and (base_amount, quote_amount) are mutually exclusive')
 
         if (buy_price is None or buy_price == 0.0) or (sell_price is None or sell_price == 0.0):
             return (0, 0)
