@@ -1,8 +1,8 @@
 import math
 
 from bitshares import BitShares
-from bitshares.market import Market
 from bitshares.asset import Asset
+from bitshares.market import Market
 
 
 class BitSharesHelper:
@@ -10,15 +10,13 @@ class BitSharesHelper:
         self.bitshares = BitShares(node=node)
         self.fetch_depth = 50
 
-    def _get_market(self, market):
-        return Market(market, bitshares_instance=self.bitshares)
-
     def get_market_buy_price_pct_depth(self, market, depth_pct):
-        """ Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from highest bid
+        """
+        Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from highest bid.
 
-            :param str market: market in format 'QUOTE/BASE'
-            :param float depth_pct: depth percent (1-100) to measure volume and average price
-            :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :param str market: market in format 'QUOTE/BASE'
+        :param float depth_pct: depth percent (1-100) to measure volume and average price
+        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         if not depth_pct > 0:
             raise Exception('depth_pct should be greater than 0')
@@ -47,11 +45,12 @@ class BitSharesHelper:
         return (base_amount / quote_amount, quote_amount)
 
     def get_market_sell_price_pct_depth(self, market, depth_pct):
-        """ Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from lowest ask
+        """
+        Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from lowest ask.
 
-            :param str market: market in format 'QUOTE/BASE'
-            :param float depth_pct: depth percent (1-100) to measure volume and average price
-            :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :param str market: market in format 'QUOTE/BASE'
+        :param float depth_pct: depth percent (1-100) to measure volume and average price
+        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         if not depth_pct > 0:
             raise Exception('depth_pct should be greater than 0')
@@ -80,13 +79,14 @@ class BitSharesHelper:
         return (base_amount / quote_amount, quote_amount)
 
     def get_market_buy_price(self, market, quote_amount=0, base_amount=0):
-        """ Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be sold, enhanced with
-            moving average or weighted moving average. Most of this method is taken from DEXBot
+        """
+        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be sold, enhanced with moving average or
+        weighted moving average. Most of this method is taken from DEXBot.
 
-            :param str market: market in format 'QUOTE/BASE'
-            :param float quote_amount:
-            :param float base_amount:
-            :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :param str market: market in format 'QUOTE/BASE'
+        :param float quote_amount:
+        :param float base_amount:
+        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         market = self._get_market(market)
 
@@ -144,13 +144,14 @@ class BitSharesHelper:
         return (base_amount / quote_amount, base_amount if base else quote_amount)
 
     def get_market_sell_price(self, market, quote_amount=0, base_amount=0):
-        """ Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be bought, enhanced with
-            moving average or weighted moving average. Most of this method is taken from DEXBot
+        """
+        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be bought, enhanced with moving average or
+        weighted moving average. Most of this method is taken from DEXBot.
 
-            :param str market: market in format 'QUOTE/BASE'
-            :param float quote_amount:
-            :param float base_amount:
-            :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :param str market: market in format 'QUOTE/BASE'
+        :param float quote_amount:
+        :param float base_amount:
+        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
         market = self._get_market(market)
 
@@ -206,13 +207,14 @@ class BitSharesHelper:
         return (base_amount / quote_amount, quote_amount if quote else base_amount)
 
     def get_market_center_price(self, market, base_amount=0, quote_amount=0, depth_pct=0):
-        """ Returns the center price of market.
+        """
+        Returns the center price of market.
 
-            :param str market: market in format 'QUOTE/BASE'
-            :param float base_amount:
-            :param float quote_amount:
-            :param float depth_pct: depth percent (1-100) to measure volume and average price
-            :return: Tuple with market center price as float, volume in buy or sell side which is lower
+        :param str market: market in format 'QUOTE/BASE'
+        :param float base_amount:
+        :param float quote_amount:
+        :param float depth_pct: depth percent (1-100) to measure volume and average price
+        :return: Tuple with market center price as float, volume in buy or sell side which is lower
         """
         center_price = None
         if depth_pct:
@@ -237,11 +239,15 @@ class BitSharesHelper:
         return (center_price, min(buy_volume, sell_volume))
 
     def get_feed_price(self, asset):
-        """ Get price data from feed
+        """
+        Get price data from feed.
 
-            :param str asset: name of the asset
-            :return: price as float
-            :rtype: float
+        :param str asset: name of the asset
+        :return: price as float
+        :rtype: float
         """
         asset = Asset(asset, bitshares_instance=self.bitshares)
         return float(asset.feed['settlement_price'])
+
+    def _get_market(self, market):
+        return Market(market, bitshares_instance=self.bitshares)
