@@ -6,6 +6,7 @@ This is a python scripts collection for golos blockchain network.
 * `donation.py` - make a donation for post
 * `change_password.py` - change all account keys using random generated password or user-provided
 * `calc_vesting_reward.py` - calculate profit from vesting holdings
+* `inflation.py` - calculate current inflation or model long-term inflation
 * `generate_keypair.py` - just generate private and public keypair
 * `transfer.py` - transfer some money to another account
 * `transfer_to_vesting.py` - transfer GOLOS to vesting balance (Golos Power)
