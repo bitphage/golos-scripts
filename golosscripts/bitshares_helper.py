@@ -1,16 +1,19 @@
 import math
 
-from bitshares import BitShares
-from bitshares.asset import Asset
-from bitshares.market import Market
+from bitshares.aio import BitShares
+from bitshares.aio.asset import Asset
+from bitshares.aio.market import Market
 
 
 class BitSharesHelper:
-    def __init__(self, node=None):
-        self.bitshares = BitShares(node=node)
+    def __init__(self, node=None, loop=None):
+        self.bitshares = BitShares(node=node, loop=loop)
         self.fetch_depth = 50
 
-    def get_market_buy_price_pct_depth(self, market, depth_pct):
+    async def connect(self):
+        await self.bitshares.connect()
+
+    async def get_market_buy_price_pct_depth(self, market, depth_pct):
         """
         Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from highest bid.
 
@@ -21,9 +24,9 @@ class BitSharesHelper:
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
 
-        market = self._get_market(market)
+        market = await self._get_market(market)
 
-        market_orders = market.orderbook(self.fetch_depth)['bids']
+        market_orders = (await market.orderbook(self.fetch_depth))['bids']
         market_fee = market['base'].market_fee_percent
 
         if not market_orders:
@@ -44,7 +47,7 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount)
 
-    def get_market_sell_price_pct_depth(self, market, depth_pct):
+    async def get_market_sell_price_pct_depth(self, market, depth_pct):
         """
         Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from lowest ask.
 
@@ -55,9 +58,9 @@ class BitSharesHelper:
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
 
-        market = self._get_market(market)
+        market = await self._get_market(market)
 
-        market_orders = market.orderbook(self.fetch_depth)['asks']
+        market_orders = (await market.orderbook(self.fetch_depth))['asks']
         market_fee = market['quote'].market_fee_percent
 
         if not market_orders:
@@ -78,7 +81,7 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount)
 
-    def get_market_buy_price(self, market, quote_amount=0, base_amount=0):
+    async def get_market_buy_price(self, market, quote_amount=0, base_amount=0):
         """
         Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be sold, enhanced with moving average or
         weighted moving average. Most of this method is taken from DEXBot.
@@ -88,7 +91,7 @@ class BitSharesHelper:
         :param float base_amount:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
-        market = self._get_market(market)
+        market = await self._get_market(market)
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
@@ -106,7 +109,7 @@ class BitSharesHelper:
             asset_amount = quote_amount
             base = False
 
-        market_orders = market.orderbook(self.fetch_depth)['bids']
+        market_orders = (await market.orderbook(self.fetch_depth))['bids']
         market_fee = market['base'].market_fee_percent
 
         target_amount = asset_amount * (1 + market_fee)
@@ -143,7 +146,7 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, base_amount if base else quote_amount)
 
-    def get_market_sell_price(self, market, quote_amount=0, base_amount=0):
+    async def get_market_sell_price(self, market, quote_amount=0, base_amount=0):
         """
         Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be bought, enhanced with moving average or
         weighted moving average. Most of this method is taken from DEXBot.
@@ -153,7 +156,7 @@ class BitSharesHelper:
         :param float base_amount:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
-        market = self._get_market(market)
+        market = await self._get_market(market)
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
@@ -169,7 +172,7 @@ class BitSharesHelper:
             asset_amount = base_amount
             quote = False
 
-        market_orders = market.orderbook(self.fetch_depth)['asks']
+        market_orders = (await market.orderbook(self.fetch_depth))['asks']
         market_fee = market['quote'].market_fee_percent
 
         target_amount = asset_amount * (1 + market_fee)
@@ -206,7 +209,7 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount if quote else base_amount)
 
-    def get_market_center_price(self, market, base_amount=0, quote_amount=0, depth_pct=0):
+    async def get_market_center_price(self, market, base_amount=0, quote_amount=0, depth_pct=0):
         """
         Returns the center price of market.
 
@@ -224,13 +227,13 @@ class BitSharesHelper:
 
         if depth_pct:
             # depth_pct has precedence over xxx_amount
-            buy_price, buy_volume = self.get_market_buy_price_pct_depth(market, depth_pct=depth_pct)
-            sell_price, sell_volume = self.get_market_sell_price_pct_depth(market, depth_pct=depth_pct)
+            buy_price, buy_volume = await self.get_market_buy_price_pct_depth(market, depth_pct=depth_pct)
+            sell_price, sell_volume = await self.get_market_sell_price_pct_depth(market, depth_pct=depth_pct)
         elif base_amount or quote_amount:
-            buy_price, buy_volume = self.get_market_buy_price(
+            buy_price, buy_volume = await self.get_market_buy_price(
                 market, quote_amount=quote_amount, base_amount=base_amount
             )
-            sell_price, sell_volume = self.get_market_sell_price(
+            sell_price, sell_volume = await self.get_market_sell_price(
                 market, quote_amount=quote_amount, base_amount=base_amount
             )
 
@@ -241,7 +244,7 @@ class BitSharesHelper:
 
         return (center_price, min(buy_volume, sell_volume))
 
-    def get_feed_price(self, asset):
+    async def get_feed_price(self, asset):
         """
         Get price data from feed.
 
@@ -249,8 +252,8 @@ class BitSharesHelper:
         :return: price as float
         :rtype: float
         """
-        asset = Asset(asset, bitshares_instance=self.bitshares)
-        return float(asset.feed['settlement_price'])
+        asset = await Asset(asset, bitshares_instance=self.bitshares)
+        return float((await asset.feed)['settlement_price'])
 
-    def _get_market(self, market):
-        return Market(market, bitshares_instance=self.bitshares)
+    async def _get_market(self, market):
+        return await Market(market, bitshares_instance=self.bitshares)
