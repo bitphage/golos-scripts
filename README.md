@@ -13,7 +13,7 @@ This is a python scripts collection for golos blockchain network.
 * `get_balance.py` - display account balances
 * `get_balance_multi.py` - display balances of multiple accounts
 * `estimate_median_price.py` - look up current witnesses price feeds and calculate new expected median price
-* `estimate_gbg_debt.py` - script to estimate system debt in GBG, see [ESTIMATE_GBG_DEBT.md](ESTIMATE_GBG_DEBT.md)
+* `estimate_gbg_debt.py` - script to estimate system debt in GBG, see [ESTIMATE\_GBG\_DEBT](ESTIMATE_GBG_DEBT.md)
 * `get_post.py` - get and print post/comment
 * `get_props.py` - script to display global properties
 * `get_median_props.py` - script to display current votable parameters
