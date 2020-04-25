@@ -23,6 +23,7 @@ This is a python scripts collection for golos blockchain network.
 * `get_conversion_requests.py` - find all GBG conversion requests
 * `get_feed_history.py` - script to obtain GBG price feed history
 * `get_miner_queue.py` - script to display miner queue
+* `get_median_voting.py` - get witnesses voting for a particular chain param
 * `get_witness.py` - script to obtain current info for specified witness
 * `get_witnesses.py` - script to display known witnesses, sorted by votes
 * `post.py` - publish post to the blockchain
