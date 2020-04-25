@@ -35,6 +35,7 @@ This is a python scripts collection for golos blockchain network.
 * `delegate_vesting_shares.py` - script to delegate vesting shares
 * `witness_approve.py` - vote for witness
 * `witness_disapprove.py` - remove vote from witness
+* `update_witness.py` - script to manipulate witness data in the blockchain, see [UPDATE\_WITNESS](UPDATE_WITNESS.md)
 
 Requirements
 ------------
