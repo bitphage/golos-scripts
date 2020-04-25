@@ -8,6 +8,15 @@ nodes_old:
   - ws://localhost:8091
   - wss://api.golos.cf
 
+node_bts:
+  - wss://eu.nodes.bitshares.ws
+  - wss://api.bitshares.org
+  - wss://api.dex.trading
+  - wss://dex.iobanker.com:9090
+  - wss://api.bts.ai
+  - wss://api.bitshares.bhuz.info/ws
+  - wss://api.btsgo.net/ws
+
 # settings for get_conversion_requests.py, used for notifies about converson requests
 notify_account: foo
 notify_message: "Вы конвертируете GBG в GOLOS через внутреннюю конвертацию. В данный момент гораздо выгоднее использовать для этого внутреннюю биржу. Курс конвертации: {:.3f} GBG/GOLOS, bid-курс биржи: {:.3f} GBG/GOLOS"
