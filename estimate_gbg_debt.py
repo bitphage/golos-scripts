@@ -12,13 +12,16 @@ from golosscripts.functions import get_price_btc_usd_exchanges, get_price_gold_u
 
 async def calc_debt(ctx, usd):
 
-    price_mg_gold, price_btc_usd = await asyncio.gather(get_price_gold_usd_cbr(), get_price_btc_usd_exchanges())
+    bitshares = BitSharesHelper(node=ctx.config['node_bts'])
+    await bitshares.connect()
+
+    price_mg_gold, price_btc_usd, (price_btc_golos, _) = await asyncio.gather(
+        get_price_gold_usd_cbr(),
+        get_price_btc_usd_exchanges(),
+        bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20),
+    )
     # BTC/GOLD
     price_btc_gold = price_mg_gold / price_btc_usd
-
-    # BTC/GOLOS
-    bitshares = BitSharesHelper(node=ctx.config['node_bts'])
-    price_btc_golos, _ = bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20)
 
     props = ctx.helper.get_dynamic_global_properties()
     sbd_supply = Amount(props['current_sbd_supply'])
