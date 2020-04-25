@@ -18,10 +18,10 @@ notify_message: "Вы конвертируете GBG в GOLOS через вну�
 
 # your private keys here
 keys:
-  - foo
-  - bar
+  - user1
+  - user2
 
 accs:
-  - eee
-  - econmag
-  - golosmedia
+  - foo
+  - bar
+  - baz
