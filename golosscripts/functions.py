@@ -1,17 +1,20 @@
 import asyncio
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
+import aiohttp
 import ccxt.async_support as ccxt
-import requests
 from defusedxml.minidom import parseString
 
 log = logging.getLogger('golosscripts')
 
 
-def get_price_gold_rub_cbr() -> float:
+async def get_price_gold_rub_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
     """get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
+
+    if not session:
+        session = aiohttp.ClientSession(raise_for_status=True)
 
     one_day = timedelta(days=1)
     today = date.today()
@@ -19,34 +22,41 @@ def get_price_gold_rub_cbr() -> float:
     # cbr metall codes: (1 - gold, 2 - silver, 3 - platinum, 4 - palladium)
     # cbr may return an empty value on Monday, so request 2 days history
     payload = {'date_req1': yesterday.strftime('%d/%m/%Y'), 'date_req2': today.strftime('%d/%m/%Y')}
-    result = requests.get('http://www.cbr.ru/scripts/xml_metall.asp', params=payload, timeout=5)
-    result.raise_for_status()
 
-    dom = parseString(result.text)
-    price = []
+    async with session.get('http://www.cbr.ru/scripts/xml_metall.asp', params=payload, timeout=30) as result:
 
-    for element in dom.getElementsByTagName('Record'):
-        if element.getAttribute('Code') == '1':
-            price.append(element.getElementsByTagName('Buy')[0].childNodes[0].data.split(',')[0])
+        dom = parseString(await result.text())
+        price = []
 
-    # return value is grams, so divide to 1000
-    return float(price[0]) / 1000
+        for element in dom.getElementsByTagName('Record'):
+            if element.getAttribute('Code') == '1':
+                price.append(element.getElementsByTagName('Buy')[0].childNodes[0].data.split(',')[0])
+
+        # return value is grams, so divide to 1000
+        return float(price[0]) / 1000
 
 
-def get_price_usd_rub_cbr() -> float:
+async def get_price_usd_rub_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
     """get USD/RUB price from Russian Central Bank API mirror."""
 
-    result = requests.get('https://www.cbr-xml-daily.ru/daily_json.js', timeout=5)
-    result.raise_for_status()
+    if not session:
+        session = aiohttp.ClientSession(raise_for_status=True)
 
-    return result.json()['Valute']['USD']['Value']
+    async with session.get('https://www.cbr-xml-daily.ru/daily_json.js', timeout=30) as result:
+        js = await result.json(content_type='application/javascript')
+
+        return js['Valute']['USD']['Value']
 
 
-def get_price_gold_usd_cbr() -> float:
+async def get_price_gold_usd_cbr() -> float:
     """calculate gold price in USD based on cbr.ru rates."""
 
-    rub_gold_price = get_price_gold_rub_cbr()
-    rub_usd_price = get_price_usd_rub_cbr()
+    session = aiohttp.ClientSession(raise_for_status=True)
+    rub_gold_price, rub_usd_price = await asyncio.gather(
+        get_price_gold_rub_cbr(session=session), get_price_usd_rub_cbr(session=session)
+    )
+    await session.close()
+
     usd_gold_price = rub_gold_price / rub_usd_price
 
     return usd_gold_price

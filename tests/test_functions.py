@@ -9,18 +9,21 @@ from golosscripts.functions import (
 )
 
 
-def test_get_price_gold_rub_cbr():
-    price = get_price_gold_rub_cbr()
+@pytest.mark.asyncio
+async def test_get_price_gold_rub_cbr():
+    price = await get_price_gold_rub_cbr()
     assert price > 0
 
 
-def test_get_price_usd_rub_cbr():
-    price = get_price_usd_rub_cbr()
+@pytest.mark.asyncio
+async def test_get_price_usd_rub_cbr():
+    price = await get_price_usd_rub_cbr()
     assert price > 50
 
 
-def test_get_price_gold_usd_cbr():
-    price = get_price_gold_usd_cbr()
+@pytest.mark.asyncio
+async def test_get_price_gold_usd_cbr():
+    price = await get_price_gold_usd_cbr()
     assert price > 0
 
 
