@@ -18,7 +18,7 @@ async def calc_debt(ctx, usd):
 
     # BTC/GOLOS
     bitshares = BitSharesHelper(node=ctx.config['node_bts'])
-    price_btc_golos, _ = bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=5)
+    price_btc_golos, _ = bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20)
 
     props = ctx.helper.get_dynamic_global_properties()
     sbd_supply = Amount(props['current_sbd_supply'])
