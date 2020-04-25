@@ -40,7 +40,7 @@ def common_options(func):
 def helper(func):
     @click.pass_context
     def new_func(ctx, *args, **kwargs):
-        ctx.helper = Helper(nodes=ctx.config['nodes_old'], keys=ctx.config['keys'], expiration=60)
+        ctx.helper = Helper(nodes=ctx.config['nodes'], keys=ctx.config['keys'], expiration=60)
         return ctx.invoke(func, *args, **kwargs)
 
     return update_wrapper(new_func, func)
