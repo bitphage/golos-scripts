@@ -216,7 +216,12 @@ class BitSharesHelper:
         :param float depth_pct: depth percent (1-100) to measure volume and average price
         :return: Tuple with market center price as float, volume in buy or sell side which is lower
         """
-        center_price = None
+
+        if depth_pct and (base_amount or quote_amount):
+            raise ValueError('depth_pct and (base_amount, quote_amount) are mutually exclusive')
+        elif not depth_pct and not (base_amount or quote_amount):
+            raise ValueError('expected depth_pct or base_amount or quote_amount')
+
         if depth_pct:
             # depth_pct has precedence over xxx_amount
             buy_price, buy_volume = self.get_market_buy_price_pct_depth(market, depth_pct=depth_pct)
@@ -228,8 +233,6 @@ class BitSharesHelper:
             sell_price, sell_volume = self.get_market_sell_price(
                 market, quote_amount=quote_amount, base_amount=base_amount
             )
-        elif depth_pct and (base_amount or quote_amount):
-            raise ValueError('depth_pct and (base_amount, quote_amount) are mutually exclusive')
 
         if (buy_price is None or buy_price == 0.0) or (sell_price is None or sell_price == 0.0):
             return (0, 0)
