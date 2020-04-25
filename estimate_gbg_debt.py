@@ -12,8 +12,7 @@ from golosscripts.functions import get_price_btc_usd_exchanges, get_price_gold_u
 
 async def calc_debt(ctx, usd):
 
-    price_mg_gold = get_price_gold_usd_cbr()
-    price_btc_usd = await get_price_btc_usd_exchanges()
+    price_mg_gold, price_btc_usd = await asyncio.gather(get_price_gold_usd_cbr(), get_price_btc_usd_exchanges())
     # BTC/GOLD
     price_btc_gold = price_mg_gold / price_btc_usd
 
