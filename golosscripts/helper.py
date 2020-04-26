@@ -2,7 +2,7 @@ import logging
 import re
 from collections import namedtuple
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import Dict, List, Optional, Union
 
 from golos import Steem
 from golos.account import Account
@@ -212,6 +212,24 @@ class Helper(Steem):
         feeds = sorted(feeds, key=lambda k: k.price)
 
         return feeds
+
+    def get_witness_pricefeed(self, witness: Union[str, Dict]) -> float:
+        """Obtain current published price for witness."""
+
+        if isinstance(witness, str):
+            witness_data = Witness(witness)
+        else:
+            witness_data = witness
+        base = Amount(witness_data['sbd_exchange_rate']['base']).amount
+        quote = Amount(witness_data['sbd_exchange_rate']['quote']).amount
+
+        # whether witness not exists yet, return 0
+        if quote == 0:
+            return 0
+
+        price = base / quote
+
+        return price
 
     def estimate_median_price(self) -> float:
         """Calculate new expected median price based on last median price feed."""

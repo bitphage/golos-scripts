@@ -1,4 +1,11 @@
+import pytest
+
 from golosscripts.helper import Helper
+
+
+@pytest.fixture(scope='module')
+def helper(nodes):
+    return Helper(nodes=nodes)
 
 
 def test_parse_url():
@@ -21,3 +28,8 @@ def test_parse_url():
     post = Helper.parse_url(url)
     assert post.author == 'vvk'
     assert post.permlink == 'testpost'
+
+
+def test_get_witness_pricefeed(helper):
+    price = helper.get_witness_pricefeed('vvk')
+    assert price > 0
