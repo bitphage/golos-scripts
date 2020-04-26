@@ -1,6 +1,10 @@
 import asyncio
+import logging
 
 import pytest
+
+log = logging.getLogger('golosscripts')
+log.setLevel(logging.DEBUG)
 
 
 @pytest.fixture(scope="session")
