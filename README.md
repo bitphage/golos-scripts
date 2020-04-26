@@ -58,6 +58,15 @@ poetry shell
 ./script.py
 ```
 
+Installation via pip
+--------------------
+
+With pip you can install *golosscripts* package, which provides various functions and helpers:
+
+```
+pip install golosscripts
+```
+
 How to use
 ----------
 
