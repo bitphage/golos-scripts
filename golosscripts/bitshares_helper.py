@@ -35,7 +35,7 @@ class BitSharesHelper:
 
         :param str market: market in format 'QUOTE/BASE'
         :param float depth_pct: depth percent (1-100) to measure volume and average price
-        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :return: tuple with ("price as float", volume) where volume is actual quote volume
         """
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
@@ -69,7 +69,7 @@ class BitSharesHelper:
 
         :param str market: market in format 'QUOTE/BASE'
         :param float depth_pct: depth percent (1-100) to measure volume and average price
-        :return: tuple with ("price as float", volume) where volume is actual base or quote volume
+        :return: tuple with ("price as float", volume) where volume is actual quote volume
         """
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
