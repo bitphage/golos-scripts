@@ -10,6 +10,14 @@ from defusedxml.minidom import parseString
 log = logging.getLogger('golosscripts')
 
 
+def price_troyounce_to_price_1mg(price_troyounce: float) -> float:
+    """Convert price per troy ounce to price per milligramm."""
+    gram_in_troyounce = 31.1034768
+    price = price_troyounce / gram_in_troyounce / 1000
+
+    return price
+
+
 async def get_price_gold_rub_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
     """get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
 

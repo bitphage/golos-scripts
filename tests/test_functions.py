@@ -6,7 +6,13 @@ from golosscripts.functions import (
     get_price_gold_rub_cbr,
     get_price_gold_usd_cbr,
     get_price_usd_rub_cbr,
+    price_troyounce_to_price_1mg,
 )
+
+
+def test_price_troyounce_to_price_1mg():
+    price = price_troyounce_to_price_1mg(10000)
+    assert price > 0
 
 
 @pytest.mark.asyncio
