@@ -280,7 +280,7 @@ class BitSharesHelper:
         price1, volume1 = await self.get_market_center_price(market1, depth_pct=depth_pct)
         log.debug('Raw price {:.8f} {}/{}'.format(price1, quote, via))
 
-        if via == via:
+        if base == via:
             return price1, volume1
 
         # Price and volume on B/C  market
