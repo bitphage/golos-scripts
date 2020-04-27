@@ -7,7 +7,7 @@ from golos.amount import Amount
 
 from golosscripts.bitshares_helper import BitSharesHelper
 from golosscripts.decorators import common_options, helper
-from golosscripts.functions import get_price_btc_usd_exchanges, get_price_gold_usd_cbr
+from golosscripts.functions import get_price_btc_usd_exchanges, get_price_usd_gold_cbr
 
 
 async def calc_debt(ctx, usd):
@@ -16,7 +16,7 @@ async def calc_debt(ctx, usd):
     await bitshares.connect()
 
     price_mg_gold, price_btc_usd, (price_btc_golos, _) = await asyncio.gather(
-        get_price_gold_usd_cbr(),
+        get_price_usd_gold_cbr(),
         get_price_btc_usd_exchanges(),
         bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20),
     )

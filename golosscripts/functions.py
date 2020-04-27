@@ -57,8 +57,8 @@ async def get_price_usd_rub_cbr(session: Optional[aiohttp.ClientSession] = None)
         return js['Valute']['USD']['Value']
 
 
-async def get_price_gold_usd_cbr() -> float:
-    """calculate gold price in USD based on cbr.ru rates."""
+async def get_price_usd_gold_cbr() -> float:
+    """Calculate price of 1 mg GOLD in USD based on cbr.ru rates."""
 
     session = aiohttp.ClientSession(raise_for_status=True)
     rub_gold_price, rub_usd_price = await asyncio.gather(
