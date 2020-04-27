@@ -110,7 +110,7 @@ description = "A JavaScript / Python / PHP cryptocurrency trading library with s
 name = "ccxt"
 optional = false
 python-versions = "*"
-version = "1.27.2"
+version = "1.27.3"
 
 [package.dependencies]
 certifi = ">=2018.1.18"
@@ -291,7 +291,7 @@ websockets = ">=8.1,<9"
 speedups = ["secp256k1 (>=0.13.2)"]
 
 [package.source]
-reference = "03d654bc990c6dacc517a78b4a9b7c4b224b995e"
+reference = "1f42de0124751dacd925ad5369dee2367a2dbd33"
 type = "git"
 url = "https://github.com/bitfag/python-graphenelib.git"
 [[package]]
@@ -756,7 +756,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "54a13d7dba7ccb7fc9137ce612e05be2fd7b0ee2a30a8593b0bd90d2a02a2adc"
+content-hash = "06825ea8711d46c427b6eb41bb0711ee03e676eb469909fc29b4f68dfc4b8f15"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -807,8 +807,8 @@ bitsharesscripts = [
     {file = "bitsharesscripts-2.0.1.tar.gz", hash = "sha256:776d90c62d4b1a516b17ccacfb7213869048e36a657a931aa4c03431d2af8b3a"},
 ]
 ccxt = [
-    {file = "ccxt-1.27.2-py2.py3-none-any.whl", hash = "sha256:fbca5b870745af6aadbe0c09383f165a5f7649ac31a35104390d477132415144"},
-    {file = "ccxt-1.27.2.tar.gz", hash = "sha256:d384058bdb02a45f10798206c57d1c560f6f4eba5b0f5a8d496990b84d1bda3b"},
+    {file = "ccxt-1.27.3-py2.py3-none-any.whl", hash = "sha256:b18fdf8f50378cb474e04a8de71c48b46a90fe934c88a5b9efc33bc18005f406"},
+    {file = "ccxt-1.27.3.tar.gz", hash = "sha256:9d0b919710654a7f2c6d9e3ffa5c524479a5dcc35a82d7c77d3bf42c6caf7be3"},
 ]
 certifi = [
     {file = "certifi-2020.4.5.1-py2.py3-none-any.whl", hash = "sha256:1d987a998c75633c40847cc966fcf5904906c920a7f17ef374f5aa4282abd304"},
