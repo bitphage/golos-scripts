@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 from bitshares.aio import BitShares
 from bitshares.aio.asset import Asset
+from bitshares.aio.instance import set_shared_bitshares_instance
 from bitshares.aio.market import Market
 
 log = logging.getLogger(__name__)
@@ -13,6 +14,7 @@ log = logging.getLogger(__name__)
 class BitSharesHelper:
     def __init__(self, node=None, loop=None):
         self.bitshares = BitShares(node=node, loop=loop)
+        set_shared_bitshares_instance(self.bitshares)  # avoids bugs with lost instance
         self.connected = False
         self.fetch_depth = 50
 
