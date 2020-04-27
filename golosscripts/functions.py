@@ -16,12 +16,13 @@ async def get_price_gold_rub_cbr(session: Optional[aiohttp.ClientSession] = None
     if not session:
         session = aiohttp.ClientSession(raise_for_status=True)
 
-    one_day = timedelta(days=1)
-    today = date.today()
-    yesterday = today - one_day
     # cbr metall codes: (1 - gold, 2 - silver, 3 - platinum, 4 - palladium)
     # cbr may return an empty value on Monday, so request 2 days history
-    payload = {'date_req1': yesterday.strftime('%d/%m/%Y'), 'date_req2': today.strftime('%d/%m/%Y')}
+    today = date.today()
+    date1 = (today - timedelta(days=2)).strftime('%d/%m/%Y')
+    date2 = today.strftime('%d/%m/%Y')
+    # date_req1 — date_req2 = Date range
+    payload = {'date_req1': date1, 'date_req2': date2}
 
     async with session.get('http://www.cbr.ru/scripts/xml_metall.asp', params=payload, timeout=30) as result:
 
