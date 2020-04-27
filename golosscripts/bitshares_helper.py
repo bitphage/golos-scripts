@@ -8,10 +8,13 @@ from bitshares.aio.market import Market
 class BitSharesHelper:
     def __init__(self, node=None, loop=None):
         self.bitshares = BitShares(node=node, loop=loop)
+        self.connected = False
         self.fetch_depth = 50
 
     async def connect(self):
-        await self.bitshares.connect()
+        if not self.connected:
+            await self.bitshares.connect()
+            self.connected = True
 
     async def get_market_buy_price_pct_depth(self, market, depth_pct):
         """
