@@ -161,7 +161,7 @@ class FeedUpdater:
             price_usd_gold = await get_price_usd_gold_cbr()
             log.debug('Gold price from cbr.ru: %s USD/1mgGOLD', price_usd_gold)
         except Exception:
-            log.exception('failed to calc BTS/GOLD price, trying fallback')
+            log.exception('Failed to calc BTS/GOLD price, trying fallback')
             try:
                 feed = 'HONEST.XAU'
                 price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
@@ -233,12 +233,12 @@ class FeedUpdater:
         old_price = self.helper.get_witness_pricefeed(witness_data)
 
         median_price = self.helper.converter.sbd_median_price()
-        log.info('current median price: {:.3f}'.format(median_price))
+        log.info('Current conversion price: {:.3f}'.format(median_price))
 
         # apply correction if k defined
         if self.correction != 1:
             price = price * self.correction
-            log.info('price after correction: {:.3f}'.format(price))
+            log.info('Price after correction: {:.3f}'.format(price))
 
         # check whether our price is too old
         last_price_update_too_old = self.is_last_price_too_old(witness_data, self.max_age)
@@ -249,10 +249,10 @@ class FeedUpdater:
         # check for price difference between our old price and new price
         diff_rel = abs((old_price / price) - 1)
         if diff_rel > self.threshold_pct:
-            log.info('publishing price, difference is: {:.2%}'.format(diff_rel))
+            log.info('Publishing price, difference is: {:.2%}'.format(diff_rel))
             need_publish = True
         else:
-            log.debug('price difference is too low, not publishing price')
+            log.debug('Price difference is too low, not publishing price')
 
         # finally publish price if needed
         if need_publish or force:
@@ -260,17 +260,16 @@ class FeedUpdater:
                 log.info('--dry-run mode, not publishing price feed')
             else:
                 final_gbg_price = format(price, '.3f')
-                log.info('price to publish: %s' % final_gbg_price)
+                log.info('Price to publish: %s' % final_gbg_price)
                 self.helper.witness_feed_publish(final_gbg_price, quote='1.000', account=self.witness)
 
     async def run_forever(self) -> None:
         """Run in continuos mode to make price feed updates periodically."""
-        # main loop
         while True:
             try:
                 await self.publish_price()
             except Exception:
-                log.exception('exception in main loop:')
+                log.exception('Exception in main loop:')
 
-            log.info('Sleeping for %s', self.interval)
+            log.info('Sleeping for %s seconds', self.interval)
             await asyncio.sleep(self.interval)
