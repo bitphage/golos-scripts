@@ -1,10 +1,13 @@
+import logging
 import math
 import re
-from typing import List
+from typing import List, Tuple
 
 from bitshares.aio import BitShares
 from bitshares.aio.asset import Asset
 from bitshares.aio.market import Market
+
+log = logging.getLogger(__name__)
 
 
 class BitSharesHelper:
@@ -259,6 +262,39 @@ class BitSharesHelper:
         center_price = buy_price * math.sqrt(sell_price / buy_price)
 
         return (center_price, min(buy_volume, sell_volume))
+
+    async def get_price_across_2_markets(self, market: str, via: str, depth_pct: float = 20) -> Tuple[float, float]:
+        """
+        Derive cross-price for A/C from A/B, B/C markets.
+
+        :param str market: target market in format A/C
+        :param str via: intermediate asset
+        :param float depth_pct: depth percent (1-100) to measure volume and average price
+        :return: tuple with price and volume
+        """
+        # Price and volume on A/B market
+        quote, base = self.split_pair(market)
+        market1 = f'{quote}/{via}'
+        price1, volume1 = await self.get_market_center_price(market1, depth_pct=depth_pct)
+        log.debug('Raw price {:.8f} {}/{}'.format(price1, quote, via))
+
+        if via == via:
+            return price1, volume1
+
+        # Price and volume on B/C  market
+        market2 = f'{via}/{base}'
+        price2, volume2 = await self.get_market_center_price(market2, depth_pct=depth_pct)
+
+        # Derived price A/C
+        price = price1 * price2
+
+        # Limit volume by smallest volume across steps
+        try:
+            volume = min(volume1, volume2 / price1)
+        except ZeroDivisionError:
+            volume = 0
+
+        return price, volume
 
     async def get_feed_price(self, asset):
         """

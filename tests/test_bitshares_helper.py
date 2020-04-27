@@ -89,3 +89,12 @@ async def test_get_market_center_price(helper):
 async def test_get_feed_price(helper):
     price = await helper.get_feed_price('HONEST.XAU')
     assert price > 0
+
+
+@pytest.mark.asyncio
+async def test_get_price_across_2_markets(helper):
+    market = 'RUBLE/RUDEX.BTC'
+    via = 'BTS'
+    price, volume = await helper.get_price_across_2_markets(market, via)
+    assert price > 0
+    assert volume > 0
