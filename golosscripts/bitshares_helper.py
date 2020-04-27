@@ -298,16 +298,25 @@ class BitSharesHelper:
 
         return price, volume
 
-    async def get_feed_price(self, asset):
+    async def get_feed_price(self, asset: str, invert: bool = False) -> float:
         """
         Get price data from feed.
 
+        By default, price is MPA/BACKING, e.g. for USD asset price is how many USD per BTS.
+        To get BACKING per MPA price, use `invert=True`
+
         :param str asset: name of the asset
+        :param bool invert: return inverted price
         :return: price as float
         :rtype: float
         """
-        asset = await Asset(asset, bitshares_instance=self.bitshares)
-        return float((await asset.feed)['settlement_price'])
+        _asset = await Asset(asset, blockchain_instance=self.bitshares)
+        price = (await _asset.feed)['settlement_price']
+
+        if invert:
+            await price.invert()
+
+        return float(price)
 
     async def _get_market(self, market):
         return await Market(market, bitshares_instance=self.bitshares)

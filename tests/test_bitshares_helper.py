@@ -87,8 +87,11 @@ async def test_get_market_center_price(helper):
 
 @pytest.mark.asyncio
 async def test_get_feed_price(helper):
-    price = await helper.get_feed_price('HONEST.XAU')
-    assert price > 0
+    price = await helper.get_feed_price('GOLD')
+    assert price < 1
+
+    price = await helper.get_feed_price('GOLD', invert=True)
+    assert price > 100
 
 
 @pytest.mark.asyncio
