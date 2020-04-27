@@ -1,4 +1,6 @@
 import math
+import re
+from typing import List
 
 from bitshares.aio import BitShares
 from bitshares.aio.asset import Asset
@@ -10,6 +12,17 @@ class BitSharesHelper:
         self.bitshares = BitShares(node=node, loop=loop)
         self.connected = False
         self.fetch_depth = 50
+
+    @staticmethod
+    def split_pair(market: str) -> List[str]:
+        """
+        Split market pair into QUOTE, BASE symbols.
+
+        :param str market: market pair in format 'QUOTE/BASE'. Supported separators are: "/", ":", "-".
+        :return: list with QUOTE and BASE as separate symbols
+        :rtype: list
+        """
+        return re.split('/|:|-', market.upper())
 
     async def connect(self):
         if not self.connected:
