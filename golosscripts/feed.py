@@ -101,7 +101,7 @@ class FeedUpdater:
         return weighted_average_price
 
     @staticmethod
-    def is_last_price_too_old(witness_data: Dict, max_age: int) -> bool:
+    def is_last_price_too_old(witness_data: Witness, max_age: int) -> bool:
         """Check last price update time and return True if older than max_age."""
 
         last_update = parse_time(witness_data['last_sbd_exchange_update'])
