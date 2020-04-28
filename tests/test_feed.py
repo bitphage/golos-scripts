@@ -97,6 +97,11 @@ async def test_publish_price(feed):
 
 
 @pytest.mark.asyncio
-async def test_run_forever(feed):
+async def test_run_forever(feed, monkeypatch):
+    async def mock():
+        pass
+
+    monkeypatch.setattr(feed, 'publish_price', mock)
+
     with pytest.raises(asyncio.TimeoutError):
-        await asyncio.wait_for(feed.run_forever(), timeout=10)
+        await asyncio.wait_for(feed.run_forever(), timeout=1)
