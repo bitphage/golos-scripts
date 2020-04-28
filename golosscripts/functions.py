@@ -97,11 +97,15 @@ async def get_price_btc_usd_exchanges() -> float:
         for exchange, usd_symbol in exchanges.items()
     ]
 
+    results = None
     # Wait for results from all tasks
     try:
         results = await asyncio.gather(*tasks)
     except ccxt.NetworkError:
         pass
+
+    if not results:
+        raise ccxt.NetworkError('Failed to obtain ticker from any source')
 
     prices = [i['last'] for i in results]
 
