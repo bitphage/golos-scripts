@@ -161,7 +161,7 @@ class FeedUpdater:
             price_usd_gold = await get_price_usd_gold_cbr()
             log.debug('Gold price from cbr.ru: %s USD/1mgGOLD', price_usd_gold)
         except Exception:
-            log.exception('Failed to calc BTS/GOLD price, trying fallback')
+            log.exception('Failed to get gold price from cbr.ru')
             try:
                 feed = 'HONEST.XAU'
                 price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
