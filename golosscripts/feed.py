@@ -171,7 +171,7 @@ class FeedUpdater:
                 price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
 
             price_bts_gold = price_troyounce_to_price_1mg(price_troyounce)
-            log.info('Gold price from %s feed, USD/1mg: %s', feed, price_bts_gold)
+            log.info('Gold price from %s feed, BTS/1mg: %s', feed, price_bts_gold)
         else:
             try:
                 market = 'BTS/RUDEX.USDT'
