@@ -10,18 +10,26 @@ from golosscripts.decorators import common_options, helper
 from golosscripts.functions import get_price_btc_usd_exchanges, get_price_usd_gold_cbr
 
 
-async def calc_debt(ctx, usd):
+async def get_bitshares_center_price(ctx):
 
     bitshares = BitSharesHelper(node=ctx.config['node_bts'])
     await bitshares.connect()
 
-    price_mg_gold, price_btc_usd, (price_btc_golos, _) = await asyncio.gather(
-        get_price_usd_gold_cbr(),
-        get_price_btc_usd_exchanges(),
-        bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20),
+    return await bitshares.get_market_center_price('RUDEX.GOLOS/RUDEX.BTC', depth_pct=20)
+
+
+async def calc_debt(ctx, usd):
+
+    price_usd_gold, price_btc_usd, (price_btc_golos, _) = await asyncio.gather(
+        get_price_usd_gold_cbr(), get_price_btc_usd_exchanges(), get_bitshares_center_price(ctx)
     )
+    print('External price USD/XAU: {:.5f}'.format(price_usd_gold))
+    print('External price USD/BTC: {:.8f}'.format(price_btc_usd))
+    print('External price BTC/GOLOS: {:.8f}'.format(price_btc_golos))
+
     # BTC/GOLD
-    price_btc_gold = price_mg_gold / price_btc_usd
+    price_btc_gold = price_usd_gold / price_btc_usd
+    print('External price BTC/XAU: {:.8f}'.format(price_btc_gold))
 
     props = ctx.helper.get_dynamic_global_properties()
     sbd_supply = Amount(props['current_sbd_supply'])
@@ -93,13 +101,11 @@ async def calc_debt(ctx, usd):
     print('Approximate GBG emission per day: {:.0f}'.format(gbg_emission_day))
 
     print('Conversion-derived price BTC/GBG: {:.8f}'.format(price_btc_golos / median))
-    print('External price BTC/XAU: {:.8f}'.format(price_btc_gold))
-    print('Current external price BTC/GOLOS: {:.8f}'.format(price_btc_golos))
 
     if usd:
-        print('Approximate USD/GOLOS price at 2%-debt point: {:.3f}'.format(price_mg_gold * min_price * 5))
-        print('Approximate USD/GOLOS price at 5%-debt point: {:.3f}'.format(price_mg_gold * min_price * 2))
-        print('Approximate USD/GOLOS price at 10%-debt point: {:.3f}'.format(price_mg_gold * min_price))
+        print('Approximate USD/GOLOS price at 2%-debt point: {:.3f}'.format(price_usd_gold * min_price * 5))
+        print('Approximate USD/GOLOS price at 5%-debt point: {:.3f}'.format(price_usd_gold * min_price * 2))
+        print('Approximate USD/GOLOS price at 10%-debt point: {:.3f}'.format(price_usd_gold * min_price))
     else:
         print('Approximate BTC/GOLOS price at 2%-debt point: {:.8f}'.format(price_btc_gold * min_price * 5))
         print('Approximate BTC/GOLOS price at 5%-debt point: {:.8f}'.format(price_btc_gold * min_price * 2))
