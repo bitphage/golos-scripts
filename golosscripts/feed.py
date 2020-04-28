@@ -159,7 +159,7 @@ class FeedUpdater:
 
         try:
             price_usd_gold = await get_price_usd_gold_cbr()
-            log.debug('Gold price from cbr.ru: %s USD/1mgGOLD', price_usd_gold)
+            log.info('Gold price from cbr.ru: %.5f USD/1mgGOLD', price_usd_gold)
         except Exception:
             log.exception('Failed to get gold price from cbr.ru')
             try:
@@ -171,7 +171,7 @@ class FeedUpdater:
                 price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
 
             price_bts_gold = price_troyounce_to_price_1mg(price_troyounce)
-            log.debug('Gold price from %s feed, USD/1mg: %s', feed, price_bts_gold)
+            log.info('Gold price from %s feed, USD/1mg: %s', feed, price_bts_gold)
         else:
             try:
                 market = 'BTS/RUDEX.USDT'
@@ -196,7 +196,7 @@ class FeedUpdater:
     async def calc_price_kuna(self) -> float:
         """Calculate price GBG/GOLOS using kuna.io GOL ticker."""
         price_usd_gold = await get_price_usd_gold_cbr()
-        log.debug('Gold price from cbr.ru: %s USD/1mgGOLD', price_usd_gold)
+        log.info('Gold price from cbr.ru: %s USD/1mgGOLD', price_usd_gold)
 
         ticker = await fetch_ticker('kuna', 'GOL/BTC')
         price_btc_golos = ticker['last']
