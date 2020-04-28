@@ -18,7 +18,7 @@ def price_troyounce_to_price_1mg(price_troyounce: float) -> float:
     return price
 
 
-async def get_price_gold_rub_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
+async def get_price_rub_gold_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
     """get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
 
     if not session:
@@ -62,7 +62,7 @@ async def get_price_usd_gold_cbr() -> float:
 
     session = aiohttp.ClientSession(raise_for_status=True)
     rub_gold_price, rub_usd_price = await asyncio.gather(
-        get_price_gold_rub_cbr(session=session), get_price_usd_rub_cbr(session=session)
+        get_price_rub_gold_cbr(session=session), get_price_usd_rub_cbr(session=session)
     )
     await session.close()
 
@@ -73,9 +73,13 @@ async def get_price_usd_gold_cbr() -> float:
 
 async def fetch_ticker(exchange: str, market: str) -> Dict[str, Any]:
     _exchange = getattr(ccxt, exchange)()
-    ticker = await _exchange.fetch_ticker(market)
-    log.debug('got ticker from %s', exchange)
-    await _exchange.close()
+    try:
+        ticker = await _exchange.fetch_ticker(market)
+        log.debug('got ticker from %s', exchange)
+    except Exception:
+        raise
+    finally:
+        await _exchange.close()
 
     return ticker
 

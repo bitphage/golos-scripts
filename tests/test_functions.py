@@ -3,7 +3,7 @@ import pytest
 from golosscripts.functions import (
     fetch_ticker,
     get_price_btc_usd_exchanges,
-    get_price_gold_rub_cbr,
+    get_price_rub_gold_cbr,
     get_price_usd_gold_cbr,
     get_price_usd_rub_cbr,
     price_troyounce_to_price_1mg,
@@ -16,8 +16,8 @@ def test_price_troyounce_to_price_1mg():
 
 
 @pytest.mark.asyncio
-async def test_get_price_gold_rub_cbr():
-    price = await get_price_gold_rub_cbr()
+async def test_get_price_rub_gold_cbr():
+    price = await get_price_rub_gold_cbr()
     assert price > 0
 
 
