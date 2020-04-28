@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import aiohttp
 import ccxt.async_support as ccxt
@@ -18,7 +18,9 @@ def price_troyounce_to_price_1mg(price_troyounce: float) -> float:
     return price
 
 
-async def get_price_rub_gold_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
+async def get_price_rub_gold_cbr(
+    timeout: Union[int, float] = 12, session: Optional[aiohttp.ClientSession] = None
+) -> float:
     """get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
 
     if not session:
@@ -32,7 +34,7 @@ async def get_price_rub_gold_cbr(session: Optional[aiohttp.ClientSession] = None
     # date_req1 — date_req2 = Date range
     payload = {'date_req1': date1, 'date_req2': date2}
 
-    async with session.get('http://www.cbr.ru/scripts/xml_metall.asp', params=payload, timeout=30) as result:
+    async with session.get('http://www.cbr.ru/scripts/xml_metall.asp', params=payload, timeout=timeout) as result:
 
         dom = parseString(await result.text())
         price = []
@@ -45,13 +47,15 @@ async def get_price_rub_gold_cbr(session: Optional[aiohttp.ClientSession] = None
         return float(price[0]) / 1000
 
 
-async def get_price_usd_rub_cbr(session: Optional[aiohttp.ClientSession] = None) -> float:
+async def get_price_usd_rub_cbr(
+    timeout: Union[int, float] = 12, session: Optional[aiohttp.ClientSession] = None
+) -> float:
     """get USD/RUB price from Russian Central Bank API mirror."""
 
     if not session:
         session = aiohttp.ClientSession(raise_for_status=True)
 
-    async with session.get('https://www.cbr-xml-daily.ru/daily_json.js', timeout=30) as result:
+    async with session.get('https://www.cbr-xml-daily.ru/daily_json.js', timeout=timeout) as result:
         js = await result.json(content_type='application/javascript')
 
         return js['Valute']['USD']['Value']
