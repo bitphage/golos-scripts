@@ -1,9 +1,10 @@
 import asyncio
 import logging
 import statistics
+from collections import namedtuple
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 from golos.utils import parse_time
 from golos.witness import Witness
@@ -19,6 +20,7 @@ bitshares_markets = [
     'RUDEX.GOLOS/RUBLE',
     'RUDEX.GOLOS/RUDEX.USDT',
 ]
+market_data = namedtuple('price_data', ['price', 'volume', 'market'])
 
 
 class PriceSource(Enum):
@@ -96,14 +98,14 @@ class FeedUpdater(Helper):
         self.max_age = max_age
 
     @staticmethod
-    def calc_weighted_average_price(prices: List[Dict[str, float]]) -> float:
+    def calc_weighted_average_price(prices: List[market_data]) -> float:
         """
         Calculate weighted average price using "volume" key.
 
-        :param list prices: list of dicts [{'price': price, 'volume': volume, 'market': market}]
+        :param list prices: list of market_data tuples
         """
-        sum_volume = sum((i['volume'] for i in prices))
-        weighted_average_price = sum((i['price'] * i['volume'] / sum_volume for i in prices))
+        sum_volume = sum((i.volume for i in prices))
+        weighted_average_price = sum((i.price * i.volume / sum_volume for i in prices))
 
         return weighted_average_price
 
@@ -137,9 +139,9 @@ class FeedUpdater(Helper):
                 target_market, via=base, depth_pct=self.depth_pct
             )
             log.debug('Derived price from market {}: {:.8f} BTS/GOLOS, volume: {:.0f}'.format(market, price, volume))
-            price_data.append({'price': price, 'volume': volume, 'market': market})
+            price_data.append(market_data(price, volume, market))
 
-        prices = [element['price'] for element in price_data if element['price'] > 0]
+        prices = [element.price for element in price_data if element.price > 0]
         price_bts_golos_median = statistics.median(prices)
         log.debug('Median market price: {:.8f} BTS/GOLOS'.format(price_bts_golos_median))
 

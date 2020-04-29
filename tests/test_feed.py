@@ -4,7 +4,7 @@ import pytest
 from golos.utils import fmt_time_from_now
 from golosbase.exceptions import UnhandledRPCError
 
-from golosscripts.feed import FeedUpdater
+from golosscripts.feed import FeedUpdater, market_data
 
 
 @pytest.fixture(scope='module')
@@ -52,8 +52,8 @@ def test_init(nodes, node_bts):
 
 def test_calc_weighted_average_price():
     prices = [
-        {'price': 1, 'volume': 10.0},
-        {'price': 2, 'volume': 10.0},
+        market_data(1, 10.0, 'm1'),
+        market_data(2, 10.0, 'm2'),
     ]
     price = FeedUpdater.calc_weighted_average_price(prices)
     assert price == 1.5
