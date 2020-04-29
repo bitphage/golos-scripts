@@ -32,7 +32,7 @@ class Metric(Enum):
     weighted_average = 3
 
 
-class FeedUpdater:
+class FeedUpdater(Helper):
     """This class is used to calculate and update 'sbd_exchange_rate' for witness."""
 
     def __init__(self, config: Dict[str, Any], dry_run: bool = False,) -> None:
@@ -52,8 +52,6 @@ class FeedUpdater:
         :param bool dry_run: only do price calculation without sending transaction
         """
 
-        self.dry_run = dry_run
-
         self.witness = config.get('witness')
         if not self.witness:
             raise ValueError('witness is not set in config')
@@ -70,17 +68,19 @@ class FeedUpdater:
         except AttributeError:
             raise ValueError('unknown metric: %s', metric)
 
+        # Helper setup
         if 'node' not in config:
             raise ValueError('node is not set in config')
         if 'keys' not in config:
             raise ValueError('no keys in config')
-        self.helper = Helper(nodes=config['node'], keys=config['keys'])
+        super().__init__(nodes=config['node'], keys=config['keys'])
 
         if self.price_source == PriceSource.bitshares:
             if 'node_bts' not in config:
                 raise ValueError('node_bts is not set in config')
             self.bitshares = BitSharesHelper(node=config['node_bts'])
 
+        self.dry_run = dry_run
         self.markets = config.get('markets', bitshares_markets)
         self.depth_pct = config.get('depth_pct', 20)
         self.threshold_pct = config.get('threshold_pct', 10) / 100
@@ -230,9 +230,9 @@ class FeedUpdater:
             price = await self.calc_price_kuna()
 
         witness_data = Witness(self.witness)
-        old_price = self.helper.get_witness_pricefeed(witness_data)
+        old_price = self.get_witness_pricefeed(witness_data)
 
-        median_price = self.helper.converter.sbd_median_price()
+        median_price = self.converter.sbd_median_price()
         log.info('Current conversion price: {:.3f}'.format(median_price))
 
         # apply correction if k defined
@@ -261,7 +261,7 @@ class FeedUpdater:
             else:
                 final_gbg_price = format(price, '.3f')
                 log.info('Price to publish: %s' % final_gbg_price)
-                self.helper.witness_feed_publish(final_gbg_price, quote='1.000', account=self.witness)
+                self.witness_feed_publish(final_gbg_price, quote='1.000', account=self.witness)
 
     async def run_forever(self) -> None:
         """Run in continuos mode to make price feed updates periodically."""
