@@ -3,7 +3,7 @@ import logging
 import statistics
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Dict, List, Optional, Union
 
 from golos.utils import parse_time
 from golos.witness import Witness
@@ -35,58 +35,65 @@ class Metric(Enum):
 class FeedUpdater(Helper):
     """This class is used to calculate and update 'sbd_exchange_rate' for witness."""
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False,) -> None:
+    def __init__(
+        self,
+        node: Union[str, List[str]],
+        keys: Union[str, List[str]],
+        witness: str,
+        dry_run: bool = False,
+        source: str = 'bitshares',
+        node_bts: Optional[Union[str, List[str]]] = None,
+        markets: Optional[List[str]] = None,
+        metric: str = 'weighted_average',
+        depth_pct: float = 20.0,
+        threshold_pct: float = 10.0,
+        interval: int = 3600,
+        k: float = 1.0,  # noqa: VNE001
+        max_age: int = 86400,
+    ) -> None:
         """
         Instantiate FeedUpdater.
 
-        config is supposed to contain following configuration directives:
-
-            - node: golos node to connect to
-            - node_bts: bitshares node
-            - keys: witness active keys
-            - markets: list of markets to use to obtain price, in format ['QUOTE/BASE']
-            - metric: what metric to use to calculate price
-            - depth_pct: how deeply measure market for volume
-
-        :param dict config: dictionary containing configuration directives
+        :param str,list node: golos node to connect to
+        :param str,list keys: witness active keys
+        :param str witness: witness name to update feed for
         :param bool dry_run: only do price calculation without sending transaction
+        :param str,list node_bts: bitshares node
+        :param list markets: list of bitshares markets to use to obtain price, in format ['QUOTE/BASE']
+        :param str metric: what metric to use to calculate price
+        :param float depth_pct: how deeply measure market for volume
+        :param float threshold_pct: price change threshold to trigger price feed publish
+        :param int interval: how often calculate new price
+        :param float k: correction coefficient, adjusts price up or down
+        :param int max_age: max age of price feed to trigger force-publish
         """
 
-        self.witness = config.get('witness')
-        if not self.witness:
-            raise ValueError('witness is not set in config')
-
-        price_source = config.get('source', 'bitshares')
         try:
-            self.price_source = getattr(PriceSource, price_source)
+            self.price_source = getattr(PriceSource, source)
         except AttributeError:
-            raise ValueError('unknown price source: %s', price_source)
+            raise ValueError('unknown price source: %s', source)
 
-        metric = config.get('metric', 'weighted_average')
         try:
             self.metric = getattr(Metric, metric)
         except AttributeError:
             raise ValueError('unknown metric: %s', metric)
 
         # Helper setup
-        if 'node' not in config:
-            raise ValueError('node is not set in config')
-        if 'keys' not in config:
-            raise ValueError('no keys in config')
-        super().__init__(nodes=config['node'], keys=config['keys'])
+        super().__init__(nodes=node, keys=keys)
 
         if self.price_source == PriceSource.bitshares:
-            if 'node_bts' not in config:
-                raise ValueError('node_bts is not set in config')
-            self.bitshares = BitSharesHelper(node=config['node_bts'])
+            if not node_bts:
+                raise ValueError('node_bts should be specified')
+            self.bitshares = BitSharesHelper(node=node_bts)
 
+        self.witness = witness
         self.dry_run = dry_run
-        self.markets = config.get('markets', bitshares_markets)
-        self.depth_pct = config.get('depth_pct', 20)
-        self.threshold_pct = config.get('threshold_pct', 10) / 100
-        self.interval = config.get('interval', 3600)
-        self.correction = config.get('k', 1)
-        self.max_age = config.get('max_age', 86400)
+        self.markets = markets or bitshares_markets
+        self.depth_pct = depth_pct
+        self.threshold_pct = threshold_pct / 100
+        self.interval = interval
+        self.correction = k
+        self.max_age = max_age
 
     @staticmethod
     def calc_weighted_average_price(prices: List[Dict[str, float]]) -> float:

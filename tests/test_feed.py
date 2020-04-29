@@ -1,5 +1,4 @@
 import asyncio
-from typing import Any, Dict
 
 import pytest
 from golos.utils import fmt_time_from_now
@@ -17,14 +16,10 @@ def feed(nodes, node_bts):
         'node_bts': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
     }
-    return FeedUpdater(config)
+    return FeedUpdater(**config)
 
 
 def test_init(nodes, node_bts):
-
-    config: Dict[str, Any] = {}
-    with pytest.raises(ValueError, match='witness is not set in config'):
-        FeedUpdater(config)
 
     config = {
         'witness': 'foo',
@@ -34,7 +29,7 @@ def test_init(nodes, node_bts):
         'source': 'xynta',
     }
     with pytest.raises(ValueError, match='unknown price source'):
-        FeedUpdater(config)
+        FeedUpdater(**config)
 
     config = {
         'witness': 'foo',
@@ -44,7 +39,7 @@ def test_init(nodes, node_bts):
         'metric': 'xynta',
     }
     with pytest.raises(ValueError, match='unknown metric'):
-        FeedUpdater(config)
+        FeedUpdater(**config)
 
     config = {
         'witness': 'foo',
@@ -52,7 +47,7 @@ def test_init(nodes, node_bts):
         'node_bts': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
     }
-    FeedUpdater(config)
+    FeedUpdater(**config)
 
 
 def test_calc_weighted_average_price():
