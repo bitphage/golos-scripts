@@ -29,6 +29,10 @@ def test_parse_url():
     assert post.author == 'vvk'
     assert post.permlink == 'testpost'
 
+    url = 'https://example.com/xynta'
+    with pytest.raises(ValueError, match='Wrong URL'):
+        post = Helper.parse_url(url)
+
 
 def test_get_witness_pricefeed(helper):
     price = helper.get_witness_pricefeed('vvk')
