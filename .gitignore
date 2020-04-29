@@ -72,10 +72,11 @@ data_*.json
 # mypy
 .mypy_cache/
 
-*.sqlite
-venv/
-*~
-
 # configs
 *.yml
 *.yaml
+!.github/workflows/*.yml
+
+*.sqlite
+venv/
+*~
