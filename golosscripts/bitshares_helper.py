@@ -230,7 +230,9 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount if quote else base_amount)
 
-    async def get_market_center_price(self, market, base_amount=0, quote_amount=0, depth_pct=0):
+    async def get_market_center_price(
+        self, market: str, base_amount: float = 0, quote_amount: float = 0, depth_pct: float = 0
+    ) -> Tuple[float, float]:
         """
         Returns the center price of market.
 
