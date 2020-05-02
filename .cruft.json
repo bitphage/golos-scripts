@@ -1,17 +1,16 @@
 {
     "template": "https://github.com/bitfag/cookiecutter-base-py-project",
-    "commit": "7672609e3882f9d7a03d05cebed22f71c5a35021",
+    "commit": "ead8951f1251115df5bb6f8aca2b3586eedf9485",
     "context": {
         "cookiecutter": {
             "project_name": "golos-scripts",
             "package_name": "golosscripts",
             "version": "1.0.0",
-            "description": "Scripts for Golos",
-            "email": "vvk@vvk.pp.ru",
-            "full_name": "vvk",
+            "description": "Scripts for Golos blockchain",
             "author": "bitfag",
+            "email": "vvk@vvk.pp.ru",
+            "full_name": "Vladimir Kamarzin",
             "license": "MIT",
-            "url": "https://github.com/bitfag/golos-scripts",
             "line_width": "120",
             "_template": "https://github.com/bitfag/cookiecutter-base-py-project"
         }
