@@ -6,7 +6,7 @@ from datetime import timedelta
 import click
 
 from golosscripts.decorators import common_options, helper
-from golosscripts.helper import STEEMIT_BLOCK_INTERVAL
+from golosscripts.golos_helper import STEEMIT_BLOCK_INTERVAL
 
 
 @click.command()

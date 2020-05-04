@@ -6,7 +6,7 @@ import click
 from bitsharesscripts.functions import generate_password, get_keys_from_password
 
 from golosscripts.decorators import common_options, helper
-from golosscripts.helper import key_types
+from golosscripts.golos_helper import key_types
 
 
 @click.command()
