@@ -1,7 +1,13 @@
 golos-scripts
 =============
 
+[![Documentation
+Status](https://readthedocs.org/projects/golos-scripts/badge/?version=latest)](https://golos-scripts.readthedocs.io/en/latest/?badge=latest)
+
 This is a python scripts collection for golos blockchain network.
+
+For documentation on reusable parts, pleasee see [documentation on
+reathedocs](https://golos-scripts.readthedocs.io/en/latest/).
 
 * `donation.py` - make a donation for post
 * `change_password.py` - change all account keys using random generated password or user-provided
