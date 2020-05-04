@@ -11,7 +11,7 @@ from golos.witness import Witness
 
 from .bitshares_helper import BitSharesHelper
 from .functions import fetch_ticker, get_price_usd_gold_cbr, price_troyounce_to_price_1mg
-from .helper import Helper
+from .golos_helper import GolosHelper
 
 log = logging.getLogger(__name__)
 bitshares_markets = [
@@ -34,7 +34,7 @@ class Metric(Enum):
     weighted_average = 3
 
 
-class FeedUpdater(Helper):
+class FeedUpdater(GolosHelper):
     """
     This class is used to calculate and update 'sbd_exchange_rate' for witness.
 

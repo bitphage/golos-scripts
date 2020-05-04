@@ -4,7 +4,7 @@ from functools import update_wrapper, wraps
 import click
 import yaml
 
-from .helper import Helper
+from .golos_helper import GolosHelper
 
 log = logging.getLogger('golosscripts')
 
@@ -40,7 +40,7 @@ def common_options(func):
 def helper(func):
     @click.pass_context
     def new_func(ctx, *args, **kwargs):
-        ctx.helper = Helper(nodes=ctx.config['nodes'], keys=ctx.config['keys'], expiration=60)
+        ctx.helper = GolosHelper(nodes=ctx.config['nodes'], keys=ctx.config['keys'], expiration=60)
         return ctx.invoke(func, *args, **kwargs)
 
     return update_wrapper(new_func, func)

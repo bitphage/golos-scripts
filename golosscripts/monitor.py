@@ -6,12 +6,12 @@ from typing import List, Union
 from golos.utils import parse_time
 from golos.witness import Witness
 
-from .helper import Helper
+from .golos_helper import GolosHelper
 
 log = logging.getLogger(__name__)
 
 
-class Monitor(Helper):
+class Monitor(GolosHelper):
     """Performs monitoring of missed blocks and automatically switches signing key."""
 
     def __init__(

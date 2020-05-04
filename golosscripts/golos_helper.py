@@ -50,7 +50,7 @@ emission = namedtuple(
 log = logging.getLogger(__name__)
 
 
-class Helper(Steem):
+class GolosHelper(Steem):
     """
     Helper class for Golos which implements additional methods.
 
