@@ -21,7 +21,7 @@ def price_troyounce_to_price_1mg(price_troyounce: float) -> float:
 async def get_price_rub_gold_cbr(
     timeout: Union[int, float] = 12, session: Optional[aiohttp.ClientSession] = None
 ) -> float:
-    """get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
+    """Get price of 1 mg Gold from Russian Central Bank; return value is RUB."""
 
     if not session:
         session = aiohttp.ClientSession(raise_for_status=True)
@@ -50,7 +50,7 @@ async def get_price_rub_gold_cbr(
 async def get_price_usd_rub_cbr(
     timeout: Union[int, float] = 12, session: Optional[aiohttp.ClientSession] = None
 ) -> float:
-    """get USD/RUB price from Russian Central Bank API mirror."""
+    """Get USD/RUB price from Russian Central Bank API mirror."""
 
     if not session:
         session = aiohttp.ClientSession(raise_for_status=True)
@@ -80,6 +80,15 @@ async def get_price_usd_gold_cbr() -> float:
 
 
 async def fetch_ticker(exchange: str, market: str) -> Dict[str, Any]:
+    """
+    Fetch ticker data from exchange.
+
+    :param exchange: exchnage name, see `Supported exchanges
+        <https://ccxt.readthedocs.io/en/latest/exchanges.html>`_
+    :param market: market like 'BTC/USD'
+    :return: ticker
+    :rtype: dict
+    """
     _exchange = getattr(ccxt, exchange)()
     try:
         ticker = await _exchange.fetch_ticker(market)
@@ -93,7 +102,7 @@ async def fetch_ticker(exchange: str, market: str) -> Dict[str, Any]:
 
 
 async def get_price_btc_usd_exchanges() -> float:
-    """returns average BTC/USD price across some exchanges."""
+    """Returns average BTC/USD price across several pre-defined exchanges."""
 
     exchanges = {'binance': 'usdt', 'bittrex': 'usdt', 'coinbase': 'usd', 'gemini': 'usd'}
     tasks = [

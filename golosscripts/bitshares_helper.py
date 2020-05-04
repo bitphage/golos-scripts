@@ -1,7 +1,8 @@
+import asyncio
 import logging
 import math
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from bitshares.aio import BitShares
 from bitshares.aio.asset import Asset
@@ -12,7 +13,19 @@ log = logging.getLogger(__name__)
 
 
 class BitSharesHelper:
-    def __init__(self, node=None, loop=None):
+    """
+    A helper class to interact with BitShares network.
+
+    .. note::
+
+        This class sets shared bitshares instance, see
+        :py:func:`bitshares.aio.instance.set_shared_bitshares_instance`.
+
+    :param str,list node: bitshares node(s)
+    :param loop: :py:mod:`asyncio` event loop instance
+    """
+
+    def __init__(self, node: Union[str, list] = None, loop: asyncio.BaseEventLoop = None) -> None:
         self.bitshares = BitShares(node=node, loop=loop)
         set_shared_bitshares_instance(self.bitshares)  # avoids bugs with lost instance
         self.connected = False
@@ -30,11 +43,12 @@ class BitSharesHelper:
         return re.split('/|:|-', market.upper())
 
     async def connect(self):
+        """Connect to BitShares network."""
         if not self.connected:
             await self.bitshares.connect()
             self.connected = True
 
-    async def get_market_buy_price_pct_depth(self, market, depth_pct):
+    async def get_market_buy_price_pct_depth(self, market: str, depth_pct: float) -> Tuple[float, float]:
         """
         Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from highest bid.
 
@@ -45,10 +59,10 @@ class BitSharesHelper:
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
 
-        market = await self._get_market(market)
+        _market = await self._get_market(market)
 
-        market_orders = (await market.orderbook(self.fetch_depth))['bids']
-        market_fee = market['base'].market_fee_percent
+        market_orders = (await _market.orderbook(self.fetch_depth))['bids']
+        market_fee = _market['base'].market_fee_percent
 
         if not market_orders:
             return (0, 0)
@@ -68,7 +82,7 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount)
 
-    async def get_market_sell_price_pct_depth(self, market, depth_pct):
+    async def get_market_sell_price_pct_depth(self, market: str, depth_pct: float) -> Tuple[float, float]:
         """
         Measure QUOTE volume and BASE/QUOTE price for [depth] percent deep starting from lowest ask.
 
@@ -79,10 +93,10 @@ class BitSharesHelper:
         if not depth_pct > 0:
             raise ValueError('depth_pct should be greater than 0')
 
-        market = await self._get_market(market)
+        _market = await self._get_market(market)
 
-        market_orders = (await market.orderbook(self.fetch_depth))['asks']
-        market_fee = market['quote'].market_fee_percent
+        market_orders = (await _market.orderbook(self.fetch_depth))['asks']
+        market_fee = _market['quote'].market_fee_percent
 
         if not market_orders:
             return (0, 0)
@@ -102,17 +116,18 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, quote_amount)
 
-    async def get_market_buy_price(self, market, quote_amount=0, base_amount=0):
+    async def get_market_buy_price(
+        self, market: str, quote_amount: float = 0, base_amount: float = 0
+    ) -> Tuple[float, float]:
         """
-        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be sold, enhanced with moving average or
-        weighted moving average. Most of this method is taken from DEXBot.
+        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be sold.
 
         :param str market: market in format 'QUOTE/BASE'
         :param float quote_amount:
         :param float base_amount:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
-        market = await self._get_market(market)
+        _market = await self._get_market(market)
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
@@ -130,8 +145,8 @@ class BitSharesHelper:
             asset_amount = quote_amount
             base = False
 
-        market_orders = (await market.orderbook(self.fetch_depth))['bids']
-        market_fee = market['base'].market_fee_percent
+        market_orders = (await _market.orderbook(self.fetch_depth))['bids']
+        market_fee = _market['base'].market_fee_percent
 
         target_amount = asset_amount * (1 + market_fee)
 
@@ -167,17 +182,18 @@ class BitSharesHelper:
 
         return (base_amount / quote_amount, base_amount if base else quote_amount)
 
-    async def get_market_sell_price(self, market, quote_amount=0, base_amount=0):
+    async def get_market_sell_price(
+        self, market: str, quote_amount: float = 0, base_amount: float = 0
+    ) -> Tuple[float, float]:
         """
-        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be bought, enhanced with moving average or
-        weighted moving average. Most of this method is taken from DEXBot.
+        Returns the BASE/QUOTE price for which [depth] worth of QUOTE could be bought.
 
         :param str market: market in format 'QUOTE/BASE'
         :param float quote_amount:
         :param float base_amount:
         :return: tuple with ("price as float", volume) where volume is actual base or quote volume
         """
-        market = await self._get_market(market)
+        _market = await self._get_market(market)
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
@@ -193,8 +209,8 @@ class BitSharesHelper:
             asset_amount = base_amount
             quote = False
 
-        market_orders = (await market.orderbook(self.fetch_depth))['asks']
-        market_fee = market['quote'].market_fee_percent
+        market_orders = (await _market.orderbook(self.fetch_depth))['asks']
+        market_fee = _market['quote'].market_fee_percent
 
         target_amount = asset_amount * (1 + market_fee)
 

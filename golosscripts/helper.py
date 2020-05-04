@@ -51,6 +51,17 @@ log = logging.getLogger(__name__)
 
 
 class Helper(Steem):
+    """
+    Helper class for Golos which implements additional methods.
+
+    Please see base class documentation on instantiation.
+
+    .. note::
+
+        On instantiation this class calls :py:func:`golos.instance.set_shared_steemd_instance`!
+        This means all your golos objects like ``Account()`` etc will use that instance.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -61,7 +72,12 @@ class Helper(Steem):
 
     @staticmethod
     def parse_url(url: str) -> post_entry:
-        """Parses an url to exctract author and permlink."""
+        """
+        Parses an url to exctract author and permlink.
+
+        :param url: URL to post/comment
+        :rtype: post_entry
+        """
         result = re.search(r'@(.*?)/([^/\ #$\n\']+)', url)
         if result is None:
             raise ValueError('Wrong URL')
@@ -167,7 +183,7 @@ class Helper(Steem):
 
     def get_market_price(self, type_: str = 'bid') -> float:
         """
-        Get current market price GBG/GOLOS.
+        Get current market price GBG/GOLOS from internal Dex.
 
         :param str type_: bid or ask
         :return: price as float
@@ -195,7 +211,7 @@ class Helper(Steem):
         return min_price
 
     def get_price_feeds(self) -> List[feed]:
-        """Get current price feeds."""
+        """Get current price feeds as reported by witnesses."""
         witnesses = self.get_active_witnesses()
         witnesses = [Witness(i) for i in witnesses]
 
@@ -214,7 +230,7 @@ class Helper(Steem):
         return feeds
 
     def get_witness_pricefeed(self, witness: Union[str, Dict]) -> float:
-        """Obtain current published price for witness."""
+        """Obtain current published price for single witness."""
 
         if isinstance(witness, str):
             witness_data = Witness(witness)

@@ -35,7 +35,22 @@ class Metric(Enum):
 
 
 class FeedUpdater(Helper):
-    """This class is used to calculate and update 'sbd_exchange_rate' for witness."""
+    """
+    This class is used to calculate and update 'sbd_exchange_rate' for witness.
+
+    :param str,list node: golos node to connect to
+    :param str,list keys: witness active keys
+    :param str witness: witness name to update feed for
+    :param bool dry_run: only do price calculation without sending transaction
+    :param str,list node_bts: bitshares node
+    :param list markets: list of bitshares markets to use to obtain price, in format ['QUOTE/BASE']
+    :param str metric: what metric to use to calculate price
+    :param float depth_pct: how deeply measure market for volume
+    :param float threshold_pct: price change threshold to trigger price feed publish
+    :param int interval: how often calculate new price
+    :param float k: correction coefficient, adjusts price up or down
+    :param int max_age: max age of price feed to trigger force-publish
+    """
 
     def __init__(
         self,
@@ -53,22 +68,6 @@ class FeedUpdater(Helper):
         k: float = 1.0,  # noqa: VNE001
         max_age: int = 86400,
     ) -> None:
-        """
-        Instantiate FeedUpdater.
-
-        :param str,list node: golos node to connect to
-        :param str,list keys: witness active keys
-        :param str witness: witness name to update feed for
-        :param bool dry_run: only do price calculation without sending transaction
-        :param str,list node_bts: bitshares node
-        :param list markets: list of bitshares markets to use to obtain price, in format ['QUOTE/BASE']
-        :param str metric: what metric to use to calculate price
-        :param float depth_pct: how deeply measure market for volume
-        :param float threshold_pct: price change threshold to trigger price feed publish
-        :param int interval: how often calculate new price
-        :param float k: correction coefficient, adjusts price up or down
-        :param int max_age: max age of price feed to trigger force-publish
-        """
 
         try:
             self.price_source = getattr(PriceSource, source)
@@ -111,7 +110,12 @@ class FeedUpdater(Helper):
 
     @staticmethod
     def is_last_price_too_old(witness_data: Witness, max_age: int) -> bool:
-        """Check last price update time and return True if older than max_age."""
+        """
+        Check last price update time and return True if older than max_age.
+
+        :param witness_data: witness object dict, usually :py:class:`golos.witness.Witness` Witness instance
+        :param int max_age: max seconds since last update
+        """
 
         last_update = parse_time(witness_data['last_sbd_exchange_update'])
         log.debug('last price update: %s', last_update)
@@ -273,7 +277,16 @@ class FeedUpdater(Helper):
                 self.witness_feed_publish(final_gbg_price, quote='1.000', account=self.witness)
 
     async def run_forever(self) -> None:
-        """Run in continuos mode to make price feed updates periodically."""
+        """
+        Run in continuos mode to make price feed updates periodically.
+
+        Example for python 3.7+:
+
+        .. code-block:: python
+
+            feed_updater = FeedUpdater()
+            asyncio.run(feed_updater.run_forever())
+        """
         while True:
             try:
                 await self.publish_price()
