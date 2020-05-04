@@ -3,11 +3,11 @@ Overview
 
 This package containts reusable parts being used by scripts.
 
-* Golos Helper - implements additional high-level methods
-* BitShares Helper - performs various price calculation using bitshares orderbooks
-* Feed - class for witnesses, it implements all calculations to provide GBG price feed
-* functions - price-caclulation functions to calc BTC, gold, and other prices
-* Monitor - implements witness node monitoring to provide fault-tolerant witness node setup
+* :py:class:`~golosscripts.helper.Helper` - implements additional high-level methods for Golos
+* :py:class:`~golosscripts.bitshares_helper.BitSharesHelper` - performs various price calculation using bitshares orderbooks
+* :py:class:`~golosscripts.feed.Feed` - class for witnesses, it implements all calculations to provide GBG price feed
+* :py:mod:`~golosscripts.functions` - price-caclulation functions to calc BTC, gold, and other prices
+* :py:class:`~golosscripts.monitor.Monitor` - implements witness node monitoring to provide fault-tolerant witness node setup
 
 Contents
 --------
