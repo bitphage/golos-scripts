@@ -1,6 +1,7 @@
 golos-scripts
 =============
 
+![test](https://github.com/bitfag/golos-scripts/workflows/test/badge.svg)
 [![Documentation
 Status](https://readthedocs.org/projects/golos-scripts/badge/?version=latest)](https://golos-scripts.readthedocs.io/en/latest/?badge=latest)
 
