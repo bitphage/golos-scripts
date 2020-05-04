@@ -76,6 +76,7 @@ data_*.json
 # configs
 *.yml
 *.yaml
+!.readthedocs.yml
 !.github/workflows/*.yml
 
 *.sqlite
