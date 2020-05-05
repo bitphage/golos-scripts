@@ -29,7 +29,7 @@ async def get_price_rub_gold_cbr(
     # cbr metall codes: (1 - gold, 2 - silver, 3 - platinum, 4 - palladium)
     # cbr may return an empty value on Monday, so request 2 days history
     today = date.today()
-    date1 = (today - timedelta(days=3)).strftime('%d/%m/%Y')
+    date1 = (today - timedelta(days=7)).strftime('%d/%m/%Y')
     date2 = today.strftime('%d/%m/%Y')
     # date_req1 — date_req2 = Date range
     payload = {'date_req1': date1, 'date_req2': date2}
