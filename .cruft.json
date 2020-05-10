@@ -1,6 +1,6 @@
 {
     "template": "https://github.com/bitfag/cookiecutter-base-py-project",
-    "commit": "ead8951f1251115df5bb6f8aca2b3586eedf9485",
+    "commit": "0580b14842b25fa1678145d21ca4ca3373f69e88",
     "context": {
         "cookiecutter": {
             "project_name": "golos-scripts",
