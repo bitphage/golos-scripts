@@ -23,16 +23,16 @@ def main(ctx, virtual_supply, long_term, years):
     By default, only current daily inflation is calculated. Use --long-term flag to calculate inflation for years
     """
     daily_data = ctx.helper.calc_inflation(precise_rewards=True)
-    ctx.log.info('virtual supply: {:,.0f}'.format(daily_data.virtual_supply))
-    ctx.log.info('inflation rate: {:.2%}'.format(daily_data.current_inflation_rate))
-    ctx.log.info('total daily: {:.0f}'.format(daily_data.total))
-    ctx.log.info('workers: {:.0f}'.format(daily_data.worker))
-    ctx.log.info('witness: {:.0f}'.format(daily_data.witness))
-    ctx.log.info('vesting: {:.0f}'.format(daily_data.vesting))
-    ctx.log.info('content: {:.0f}'.format(daily_data.content))
-    ctx.log.info('top19 witnesses reward: {:.0f}'.format(daily_data.top19))
-    ctx.log.info('single top19 witness: {:.0f}'.format(daily_data.top19 / 19))
-    ctx.log.info('timeshare witnesses reward: {:.0f}'.format(daily_data.timeshare))
+    print('virtual supply: {:,.0f}'.format(daily_data.virtual_supply))
+    print('inflation rate: {:.2%}'.format(daily_data.current_inflation_rate))
+    print('total daily: {:.0f}'.format(daily_data.total))
+    print('workers: {:.0f}'.format(daily_data.worker))
+    print('witness: {:.0f}'.format(daily_data.witness))
+    print('vesting: {:.0f}'.format(daily_data.vesting))
+    print('content: {:.0f}'.format(daily_data.content))
+    print('top19 witnesses reward: {:.0f}'.format(daily_data.top19))
+    print('single top19 witness: {:.0f}'.format(daily_data.top19 / 19))
+    print('timeshare witnesses reward: {:.0f}'.format(daily_data.timeshare))
 
     if not long_term:
         sys.exit(0)
@@ -54,7 +54,7 @@ def main(ctx, virtual_supply, long_term, years):
         year += 1
 
         daily_data = ctx.helper.calc_inflation(start_block_num=head_block_num, virtual_supply=virtual_supply)
-        ctx.log.info(
+        print(
             'New GOLOS daily on block {} ({:.0f} years): {:.0f}. Rate: {:.2%}. Virtual Supply: {:,.0f}'.format(
                 int(head_block_num),
                 year,
