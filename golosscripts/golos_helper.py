@@ -380,7 +380,7 @@ class GolosHelper(Steem):
 
         if precise_rewards:
             total = (
-                content_reward_per_period
+                worker_reward_per_period
                 + vesting_reward_per_period
                 + witness_reward_per_period
                 + content_reward_per_period
@@ -389,7 +389,7 @@ class GolosHelper(Steem):
             worker_reward_per_period = new_steem_total * _worker_percent / STEEMIT_100_PERCENT
             witness_reward_per_period = new_steem_total * _witness_percent / STEEMIT_100_PERCENT
             vesting_reward_per_period = new_steem_total * _vesting_percent / STEEMIT_100_PERCENT
-            content_reward = (
+            content_reward_per_period = (
                 new_steem_total - worker_reward_per_period - witness_reward_per_period - vesting_reward_per_period
             )
             total = new_steem_total

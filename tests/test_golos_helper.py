@@ -37,3 +37,15 @@ def test_parse_url():
 def test_get_witness_pricefeed(helper):
     price = helper.get_witness_pricefeed('vvk')
     assert price > 0
+
+
+def test_calc_inflation_1(helper):
+    emission = helper.calc_inflation()
+    sum_ = emission.worker + emission.witness + emission.vesting + emission.content
+    assert emission.total == sum_
+
+
+def test_calc_inflation_2(helper):
+    emission = helper.calc_inflation(precise_rewards=True)
+    sum_ = emission.worker + emission.witness + emission.vesting + emission.content
+    assert emission.total == sum_
