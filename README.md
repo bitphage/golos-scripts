@@ -11,6 +11,7 @@ For documentation on reusable parts, pleasee see [documentation on reathedocs](h
 * `donation.py` - make a donation for post
 * `change_password.py` - change all account keys using random generated password or user-provided
 * `calc_vesting_reward.py` - calculate profit from vesting holdings
+* `claim.py` - claim balance from accumulative to tip or vesting
 * `inflation.py` - calculate current inflation or model long-term inflation
 * `generate_keypair.py` - just generate private and public keypair
 * `transfer.py` - transfer some money to another account
