@@ -17,7 +17,7 @@ def main(ctx, account):
     account = Account(account)
     balance = account.get_balances()
 
-    print('{:<15}{:>18.3f}'.format('To claim GOLOS:', balance['accumulative']['GOLOS']))
+    print('{:<15}{:>18.3f}'.format('Claim GOLOS:', balance['accumulative']['GOLOS']))
     print('{:<15}{:>18.3f}'.format('Tip GOLOS:', balance['tip']['GOLOS']))
 
     for asset in balance['savings']:
