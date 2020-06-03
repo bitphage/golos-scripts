@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import json
-
 import click
 
 from golosscripts.decorators import common_options, helper
@@ -10,18 +8,16 @@ from golosscripts.decorators import common_options, helper
 @click.command()
 @common_options
 @helper
+@click.option('--comment', help='add comment message to donation')
 @click.argument('from_')
 @click.argument('amount', type=float)
-@click.argument('asset')
 @click.argument('url')
 @click.pass_context
-def main(ctx, from_, amount, asset, url):
-    """Make a donation in liquid asset for specific post."""
+def main(ctx, comment, from_, amount, url):
+    """Make a donation from tip balance for specified post."""
 
     post = ctx.helper.parse_url(url)
-    memo = {'donate': {'post': '/@{}/{}'.format(post.author, post.permlink)}}
-    ctx.log.info('transfer {} -> {}: {} {}'.format(from_, post.author, amount, asset))
-    ctx.helper.transfer(post.author, amount, asset, memo=json.dumps(memo), account=from_)
+    ctx.helper.golosid_donate_v1(amount, post.author, post.permlink, comment=comment, account=from_)
 
 
 if __name__ == '__main__':
