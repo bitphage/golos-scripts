@@ -24,7 +24,8 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 click = "^7.1.1"
-python-golos = "^1.0.0"
+python-golos = "^1.1.0"
+# python-golos = {path = "/home/vvk/devel/golos/golos-python"}
 bitsharesscripts = "^2"
 ccxt = "^1.26.96"
 defusedxml = "^0.6.0"
