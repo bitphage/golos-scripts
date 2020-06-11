@@ -8,6 +8,7 @@ from typing import List, Optional, Union
 
 from golos.utils import parse_time
 from golos.witness import Witness
+from websockets.exceptions import ConnectionClosedError
 
 from .bitshares_helper import BitSharesHelper
 from .functions import fetch_ticker, get_price_usd_gold_cbr, price_troyounce_to_price_1mg
@@ -86,6 +87,8 @@ class FeedUpdater(GolosHelper):
             if not node_bts:
                 raise ValueError('node_bts should be specified')
             self.bitshares = BitSharesHelper(node=node_bts)
+            # TODO: workaround for https://github.com/xeroc/python-graphenelib/pull/168
+            self.node_bts = node_bts
 
         self.witness = witness
         self.dry_run = dry_run
@@ -290,6 +293,10 @@ class FeedUpdater(GolosHelper):
         while True:
             try:
                 await self.publish_price()
+            except ConnectionClosedError:
+                # TODO: workaround for https://github.com/xeroc/python-graphenelib/pull/168
+                self.bitshares = BitSharesHelper(node=self.node_bts)
+                continue
             except Exception:
                 log.exception('Exception in main loop:')
 
