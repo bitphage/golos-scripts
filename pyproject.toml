@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "golosscripts"
-version = "0.3.2"
+version = "0.3.3"
 description = "Scripts for Golos blockchain"
 license = "MIT"
 authors = ["Vladimir Kamarzin <vvk@vvk.pp.ru>"]
