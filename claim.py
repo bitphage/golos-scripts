@@ -18,8 +18,8 @@ def main(ctx, to, amount, to_vesting, account):
     """Claim funds from accumulative balance to tip balance or to vesting."""
 
     if not amount:
-        account = Account(account)
-        balance = account.get_balances()
+        acc = Account(account)
+        balance = acc.get_balances()
         amount = balance['accumulative']['GOLOS']
 
     if not to:
