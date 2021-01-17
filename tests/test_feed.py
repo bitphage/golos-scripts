@@ -79,6 +79,7 @@ async def test_calc_price_gbg_golos_bitshares(feed):
     assert 0 < price < 100
 
 
+@pytest.mark.skip(reason='kuna delisted golos')
 @pytest.mark.asyncio
 async def test_calc_price_kuna(feed):
     price = await feed.calc_price_kuna()
