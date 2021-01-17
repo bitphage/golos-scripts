@@ -17,9 +17,11 @@ def event_loop():
 @pytest.fixture(scope="session")
 def nodes():
     nodes = [
-        'wss://golos.lexa.host/ws',
+        'wss://golos.lexai.host/ws',
         'wss://golos.solox.world/ws',
-        'wss://api.golos.blckchnd.com/ws' 'wss://api-full.golos.id/ws',
+        'wss://api-golos.blckchnd.com/ws',
+        'wss://api-full.golos.id/ws',
+        'wss://api.aleksw.space/ws',
     ]
     return nodes
 
