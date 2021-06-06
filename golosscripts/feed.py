@@ -16,9 +16,8 @@ from .golos_helper import GolosHelper
 
 log = logging.getLogger(__name__)
 bitshares_markets = [
-    'RUDEX.GOLOS/BTS',
+    'RUDEX.GOLOS/GPH',
     'RUDEX.GOLOS/RUDEX.BTC',
-    'RUDEX.GOLOS/RUBLE',
     'RUDEX.GOLOS/RUDEX.USDT',
 ]
 market_data = namedtuple('price_data', ['price', 'volume', 'market'])
@@ -133,78 +132,59 @@ class FeedUpdater(GolosHelper):
 
         return False
 
-    async def calc_price_bts_golos(self) -> float:
-        """Calculate price BTS/GOLOS using GOLOS markets on bitshares."""
+    async def calc_price_gph_golos(self) -> float:
+        """Calculate price GPH/GOLOS using GOLOS markets on bitshares."""
         await self.bitshares.connect()
 
         price_data = []
 
         for market in self.markets:
             quote, base = self.bitshares.split_pair(market)
-            target_market = '{}/BTS'.format(quote)
+            target_market = '{}/GPH'.format(quote)
             price, volume = await self.bitshares.get_price_across_2_markets(
                 target_market, via=base, depth_pct=self.depth_pct
             )
-            log.debug('Derived price from market {}: {:.8f} BTS/GOLOS, volume: {:.0f}'.format(market, price, volume))
+            log.debug('Derived price from market {}: {:.8f} GPH/GOLOS, volume: {:.0f}'.format(market, price, volume))
             price_data.append(market_data(price, volume, market))
 
         prices = [element.price for element in price_data if element.price > 0]
-        price_bts_golos_median = statistics.median(prices)
-        log.debug('Median market price: {:.8f} BTS/GOLOS'.format(price_bts_golos_median))
+        price_gph_golos_median = statistics.median(prices)
+        log.debug('Median market price: {:.8f} GPH/GOLOS'.format(price_gph_golos_median))
 
-        price_bts_golos_mean = statistics.mean(prices)
-        log.debug('Mean market price: {:.8f} BTS/GOLOS'.format(price_bts_golos_mean))
+        price_gph_golos_mean = statistics.mean(prices)
+        log.debug('Mean market price: {:.8f} GPH/GOLOS'.format(price_gph_golos_mean))
 
-        price_bts_golos_wa = self.calc_weighted_average_price(price_data)
-        log.debug('Weighted average market price: {:.8f} BTS/GOLOS'.format(price_bts_golos_wa))
+        price_gph_golos_wa = self.calc_weighted_average_price(price_data)
+        log.debug('Weighted average market price: {:.8f} GPH/GOLOS'.format(price_gph_golos_wa))
 
         if self.metric == Metric.median:
-            price_bts_golos = price_bts_golos_median
+            price_gph_golos = price_gph_golos_median
         elif self.metric == Metric.mean:
-            price_bts_golos = price_bts_golos_mean
+            price_gph_golos = price_gph_golos_mean
         elif self.metric == Metric.weighted_average:
-            price_bts_golos = price_bts_golos_wa
+            price_gph_golos = price_gph_golos_wa
         else:
             raise ValueError('unsupported metric')
 
-        return price_bts_golos
+        return price_gph_golos
 
     async def calc_price_gbg_golos_bitshares(self) -> float:
         """Calculate price GBG/GOLOS using GOLOS markets on bitshares."""
         await self.bitshares.connect()
 
-        try:
-            price_usd_gold = await get_price_usd_gold_cbr()
-            log.info('Gold price from cbr.ru: %.5f USD/1mgGOLD', price_usd_gold)
-        except Exception:
-            log.exception('Failed to get gold price from cbr.ru')
-            try:
-                feed = 'HONEST.XAU'
-                price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
-            except Exception:
-                log.exception('%s feed failed', feed)
-                feed = 'GOLD'
-                price_troyounce = await self.bitshares.get_feed_price(feed, invert=True)
+        price_usd_gold = await get_price_usd_gold_cbr()
+        log.info('Gold price from cbr.ru: %.5f USD/1mgGOLD', price_usd_gold)
+        market = 'GPH/RUDEX.USDT'
+        price_usd_gph, _ = await self.bitshares.get_market_center_price(market, depth_pct=self.depth_pct)
+        log.debug('Price USD/GPH taken from market %s: %s', market, price_usd_gph)
 
-            price_bts_gold = price_troyounce_to_price_1mg(price_troyounce)
-            log.info('Gold price from %s feed, BTS/1mg: %s', feed, price_bts_gold)
-        else:
-            try:
-                market = 'BTS/RUDEX.USDT'
-                price_usd_bts, _ = await self.bitshares.get_market_center_price(market, depth_pct=self.depth_pct)
-                log.debug('Price USD/BTS taken from market %s: %s', market, price_usd_bts)
-            except Exception:
-                log.exception('failed to get USDT/BTS price from market')
-                price_usd_bts = await self.bitshares.get_feed_price('HONEST.USD')
-                log.debug('Price USD/BTS taken from HONEST.USD feed: %s', price_usd_bts)
+        price_gph_gold = price_usd_gold / price_usd_gph
+        log.info('Gold price in GPH: {:.8f} GPH/1mgGOLD'.format(price_gph_gold))
 
-            price_bts_gold = price_usd_gold / price_usd_bts
-            log.info('Gold price in BTS: {:.8f} BTS/1mgGOLD'.format(price_bts_gold))
+        price_gph_golos = await self.calc_price_gph_golos()
+        log.info(f'GOLOS price is: {price_gph_golos:.8f} GPH/GOLOS')
 
-        price_bts_golos = await self.calc_price_bts_golos()
-        log.info(f'GOLOS price is: {price_bts_golos:.8f} BTS/GOLOS')
-
-        price_gold_golos = price_bts_golos / price_bts_gold
+        price_gold_golos = price_gph_golos / price_gph_gold
         log.info('Calculated price {:.3f} GBG/GOLOS'.format(price_gold_golos))
 
         return price_gold_golos
@@ -244,6 +224,8 @@ class FeedUpdater(GolosHelper):
             price = await self.calc_price_gbg_golos_bitshares()
         elif self.price_source == PriceSource.kuna:
             price = await self.calc_price_kuna()
+        else:
+            raise ValueError("Unknown price source")
 
         witness_data = Witness(self.witness)
         old_price = self.get_witness_pricefeed(witness_data)
@@ -281,7 +263,7 @@ class FeedUpdater(GolosHelper):
 
     async def run_forever(self) -> None:
         """
-        Run in continuos mode to make price feed updates periodically.
+        Run in continuous mode to make price feed updates periodically.
 
         Example for python 3.7+:
 

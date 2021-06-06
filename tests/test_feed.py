@@ -68,8 +68,8 @@ def test_is_last_price_too_old():
 
 
 @pytest.mark.asyncio
-async def test_calc_price_bts_golos(feed):
-    price = await feed.calc_price_bts_golos()
+async def test_calc_price_gph_golos(feed):
+    price = await feed.calc_price_gph_golos()
     assert 0 < price < 100
 
 

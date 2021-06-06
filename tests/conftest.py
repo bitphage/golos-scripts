@@ -28,4 +28,4 @@ def nodes():
 
 @pytest.fixture(scope="session")
 def node_bts():
-    return 'wss://eu.nodes.bitshares.ws'
+    return 'wss://node.gph.ai'
