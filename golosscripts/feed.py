@@ -24,7 +24,7 @@ market_data = namedtuple('price_data', ['price', 'volume', 'market'])
 
 
 class PriceSource(Enum):
-    bitshares = 1
+    graphene = 1
     kuna = 2
 
 
@@ -42,7 +42,7 @@ class FeedUpdater(GolosHelper):
     :param str,list keys: witness active keys
     :param str witness: witness name to update feed for
     :param bool dry_run: only do price calculation without sending transaction
-    :param str,list node_bts: bitshares node
+    :param str,list node_gph: graphene node
     :param list markets: list of bitshares markets to use to obtain price, in format ['QUOTE/BASE']
     :param str metric: what metric to use to calculate price
     :param float depth_pct: how deeply measure market for volume
@@ -58,8 +58,8 @@ class FeedUpdater(GolosHelper):
         keys: Union[str, List[str]],
         witness: str,
         dry_run: bool = False,
-        source: str = 'bitshares',
-        node_bts: Optional[Union[str, List[str]]] = None,
+        source: str = 'graphene',
+        node_gph: Optional[Union[str, List[str]]] = None,
         markets: Optional[List[str]] = None,
         metric: str = 'weighted_average',
         depth_pct: float = 20.0,
@@ -82,12 +82,12 @@ class FeedUpdater(GolosHelper):
         # Helper setup
         super().__init__(nodes=node, keys=keys)
 
-        if self.price_source == PriceSource.bitshares:
-            if not node_bts:
-                raise ValueError('node_bts should be specified')
-            self.bitshares = BitSharesHelper(node=node_bts)
+        if self.price_source == PriceSource.graphene:
+            if not node_gph:
+                raise ValueError('node_gph should be specified')
+            self.bitshares = BitSharesHelper(node=node_gph)
             # TODO: workaround for https://github.com/xeroc/python-graphenelib/pull/168
-            self.node_bts = node_bts
+            self.node_gph = node_gph
 
         self.witness = witness
         self.dry_run = dry_run
@@ -220,7 +220,7 @@ class FeedUpdater(GolosHelper):
         need_publish = False
 
         # calculate prices
-        if self.price_source == PriceSource.bitshares:
+        if self.price_source == PriceSource.graphene:
             price = await self.calc_price_gbg_golos_bitshares()
         elif self.price_source == PriceSource.kuna:
             price = await self.calc_price_kuna()
@@ -277,7 +277,7 @@ class FeedUpdater(GolosHelper):
                 await self.publish_price()
             except ConnectionClosedError:
                 # TODO: workaround for https://github.com/xeroc/python-graphenelib/pull/168
-                self.bitshares = BitSharesHelper(node=self.node_bts)
+                self.bitshares = BitSharesHelper(node=self.node_gph)
                 continue
             except Exception:
                 log.exception('Exception in main loop:')

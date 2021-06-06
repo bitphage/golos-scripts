@@ -13,7 +13,7 @@ def feed(nodes, node_bts):
     config = {
         'witness': 'lex',
         'node': nodes,
-        'node_bts': node_bts,
+        'node_gph': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
     }
     return FeedUpdater(**config)
@@ -24,7 +24,7 @@ def test_init(nodes, node_bts):
     config = {
         'witness': 'foo',
         'node': nodes,
-        'node_bts': node_bts,
+        'node_gph': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
         'source': 'xynta',
     }
@@ -34,7 +34,7 @@ def test_init(nodes, node_bts):
     config = {
         'witness': 'foo',
         'node': nodes,
-        'node_bts': node_bts,
+        'node_gph': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
         'metric': 'xynta',
     }
@@ -44,7 +44,7 @@ def test_init(nodes, node_bts):
     config = {
         'witness': 'foo',
         'node': nodes,
-        'node_bts': node_bts,
+        'node_gph': node_bts,
         'keys': '5JypMRUoJpsTZcYw2y9PX58WeHa937eJE3FzhA1cQe9zsHTHCWd',
     }
     FeedUpdater(**config)
