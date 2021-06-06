@@ -105,8 +105,8 @@ class FeedUpdater(GolosHelper):
 
         :param list prices: list of market_data tuples
         """
-        sum_volume = sum((i.volume for i in prices))
-        weighted_average_price = sum((i.price * i.volume / sum_volume for i in prices))
+        sum_volume = sum(i.volume for i in prices)
+        weighted_average_price = sum(i.price * i.volume / sum_volume for i in prices)
 
         return weighted_average_price
 
